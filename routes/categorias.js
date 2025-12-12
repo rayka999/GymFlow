@@ -1,5 +1,5 @@
 let express = require('express');
-let db= require ('../utils/db')
+let db= require ('../utils/db');
 let router = express.Router();
 
 router.get('/', function(req, res) {
@@ -41,33 +41,6 @@ router.get('/:id_categoria', function(req, res) {
             }
         });
         res.render('musculos', { dados });
-    });
-});
-
-router.get('/exercicio/:id_exercicio', function(req, res) {
-    let id = req.params.id_exercicio;
-
-    let sql = `
-        SELECT 
-            id_exercicio,
-            nome,
-            descricao,
-            url,
-            tipo_midia,
-            serie_padrao,
-            repeticoes_padrao,
-            descanso_padrao
-        FROM exercicio
-        WHERE id_exercicio = ?;
-    `;
-
-    db.query(sql, [id], function(erro, rows) {
-        if (erro) return res.send(erro);
-
-        if (rows.length === 0)
-            return res.send("Exercício não encontrado.");
-
-        res.render('exercicio', { exercicio: rows[0] });
     });
 });
 

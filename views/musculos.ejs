@@ -27,7 +27,15 @@
     <% Object.keys(dados).forEach(id => { %>
 
         <div class="mb-4 p-3 bg-white rounded shadow-sm">
-            <h4 class="mb-3"><%= dados[id].nome %></h4>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0"><%= dados[id].nome %></h4>
+
+                <a href="/exercicio/add" 
+                   class="btn btn-primary btn-sm">
+                    + Adicionar Exercício
+                </a>
+            </div>
 
             <% if (dados[id].exercicios.length === 0) { %>
                 <p class="text-muted">Nenhum exercício cadastrado.</p>
@@ -35,7 +43,7 @@
 
                 <div class="list-group">
                     <% dados[id].exercicios.forEach(ex => { %>
-                        <a href="/categoria/exercicio/<%= ex.id %>" 
+                        <a href="/exercicio/<%= ex.id %>" 
                            class="list-group-item list-group-item-action ex-card">
                             <%= ex.nome %>
                         </a>
