@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 10/12/2025 às 18:46
+-- Tempo de geração: 12/12/2025 às 18:56
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -96,6 +96,29 @@ CREATE TABLE `exercicio` (
   `repeticoes_padrao` int(11) DEFAULT NULL,
   `descanso_padrao` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `exercicio`
+--
+
+INSERT INTO `exercicio` (`id_exercicio`, `nome`, `descricao`, `id_musculo`, `url`, `tipo_midia`, `serie_padrao`, `repeticoes_padrao`, `descanso_padrao`) VALUES
+(1, 'Supino Reto', 'Exercício clássico para peitoral maior', 1, NULL, NULL, 4, 10, 60),
+(2, 'Supino Inclinado', 'Foco no peitoral superior', 2, NULL, NULL, 4, 10, 60),
+(3, 'Crucifixo no Banco', 'Alongamento profundo do peitoral', 1, NULL, NULL, 3, 12, 45),
+(4, 'Puxada na Barra', 'Trabalha dorsal e força geral', 4, NULL, NULL, 4, 8, 90),
+(5, 'Remada Curvada', 'Enfase no dorsal e lombar', 4, NULL, NULL, 4, 10, 60),
+(6, 'Elevação Lateral', 'Foca no deltoide lateral', 8, NULL, NULL, 3, 12, 40),
+(7, 'Desenvolvimento', 'Trabalha toda a musculatura do ombro', 7, NULL, NULL, 4, 10, 60),
+(8, 'Rosca Direta', 'Exercício básico para bíceps', 10, NULL, NULL, 4, 12, 45),
+(9, 'Tríceps Testa', 'Foco no tríceps longo', 11, NULL, NULL, 3, 12, 45),
+(10, 'Agachamento Livre', 'Exercício completo para pernas e glúteos', 17, NULL, NULL, 5, 8, 90),
+(11, 'Leg Press', 'Trabalha quadríceps e glúteos', 17, NULL, NULL, 4, 12, 60),
+(12, 'Mesa Flexora', 'Foca no posterior da coxa', 18, NULL, NULL, 4, 12, 60),
+(13, 'Elevação de Panturrilha', 'Fortalece panturrilhas', 19, NULL, NULL, 4, 15, 45),
+(14, 'Abdominal Reto', 'Trabalha reto abdominal', 13, NULL, NULL, 3, 20, 30),
+(15, 'Prancha', 'Trabalho isométrico', 13, NULL, NULL, 3, 1, 40),
+(16, 'Elevação de Quadril (Hip Thrust)', 'Exercício principal para glúteo máximo', 15, NULL, NULL, 4, 10, 60),
+(17, 'Corrida na Esteira', 'Exercício cardiovascular geral', 23, NULL, NULL, 1, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -403,7 +426,7 @@ ALTER TABLE `conta_login`
 -- AUTO_INCREMENT de tabela `exercicio`
 --
 ALTER TABLE `exercicio`
-  MODIFY `id_exercicio` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_exercicio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de tabela `meta_aluno`
