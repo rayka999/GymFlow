@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 12/12/2025 às 18:56
+-- Tempo de geração: 17/12/2025 às 22:54
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -76,7 +76,8 @@ CREATE TABLE `conta_login` (
   `email` varchar(150) NOT NULL,
   `senha_hash` varchar(255) NOT NULL,
   `tipo` tinyint(4) NOT NULL,
-  `criado_em` timestamp NOT NULL DEFAULT current_timestamp()
+  `criado_em` timestamp NOT NULL DEFAULT current_timestamp(),
+  `user_name` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -118,7 +119,11 @@ INSERT INTO `exercicio` (`id_exercicio`, `nome`, `descricao`, `id_musculo`, `url
 (14, 'Abdominal Reto', 'Trabalha reto abdominal', 13, NULL, NULL, 3, 20, 30),
 (15, 'Prancha', 'Trabalho isométrico', 13, NULL, NULL, 3, 1, 40),
 (16, 'Elevação de Quadril (Hip Thrust)', 'Exercício principal para glúteo máximo', 15, NULL, NULL, 4, 10, 60),
-(17, 'Corrida na Esteira', 'Exercício cardiovascular geral', 23, NULL, NULL, 1, 1, 0);
+(17, 'Corrida na Esteira', 'Exercício cardiovascular geral', 23, NULL, NULL, 1, 1, 0),
+(18, 'Remada Curvada com Barra', 'Exercício voltado para musculatura das costas, focando no latíssimo do dorso, romboides e deltoides posteriores. A postura inclinada cria grande ativação muscular e melhora a força geral do dorso.', 4, 'https://youtube.com/shorts/PLY3WdTmNeI?si=Vy85jaNgHFZcAFfx', 1, 4, 12, 60),
+(19, 'Cadeira flexora', 'Exercício de isolamento focado nos músculos posteriores da coxa (isquiotibiais). Realizado em máquina, envolve a flexão dos joelhos contra resistência.', 18, 'https://youtube.com/shorts/ERaXLpeTKlQ?si=qFP_TBIZxAcO8eeg', 1, 3, 12, 60),
+(20, 'Cadeira extensora', 'Exercício de isolamento voltado para o fortalecimento do quadríceps. Executado em máquina, consiste na extensão dos joelhos contra resistência.', 17, 'https://youtube.com/shorts/l3nSsLYZU_U?si=PkCXWV7xfaa0D3Dw', 1, 4, 10, 90),
+(21, 'Rosca Martelo', 'Exercício para fortalecimento do bíceps braquial e do músculo braquiorradial. Executado com halteres, mantendo a pegada neutra durante a flexão dos cotovelos.', 10, 'https://youtube.com/shorts/43vzsQMvYys?si=sC-cmBc_pK0_qW7L', 1, 3, 12, 60);
 
 -- --------------------------------------------------------
 
@@ -323,6 +328,7 @@ ALTER TABLE `categoria_exercicio`
 ALTER TABLE `conta_login`
   ADD PRIMARY KEY (`id_login`),
   ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `user_name` (`user_name`),
   ADD KEY `id_pessoa` (`id_pessoa`);
 
 --
@@ -426,7 +432,7 @@ ALTER TABLE `conta_login`
 -- AUTO_INCREMENT de tabela `exercicio`
 --
 ALTER TABLE `exercicio`
-  MODIFY `id_exercicio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_exercicio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de tabela `meta_aluno`
