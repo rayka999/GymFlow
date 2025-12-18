@@ -1,8 +1,98 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+:root {
+    --vermelho: #c62828;
+    --cinza-claro: #f2f2f2;
+    --cinza-escuro: #2f2f2f;
 }
 
-a {
-  color: #00B7FF;
+body {
+    background-color: var(--cinza-escuro);
+    color: #fff;
+}
+
+.navbar {
+    background-color: var(--vermelho);
+}
+
+.navbar-brand, .nav-link {
+    color: rgba(255, 255, 255, 0.844);
+}
+
+.nav-link:hover {
+    color: white !important;
+}
+
+.nav-link.active {
+    border-bottom: 3px solid #fff !important;
+    font-weight: 600 !important;
+}
+
+.hero {
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+}
+
+.hero h1 {
+    color: var(--vermelho);
+    font-weight: 700;
+    text-align: center;
+}
+
+.hero p {
+    max-width: 650px;
+    margin: 1rem auto;
+    font-size: 1.1rem;
+    color: #fff;
+    text-align: center;
+}
+
+.btn-gym {
+    background-color: var(--vermelho);
+    color: #fff;
+    border: none;
+}
+
+.btn-gym:hover {
+    background-color: #a91f1f;
+}
+
+.btn-outline-gym {
+    border: 2px solid var(--vermelho);
+    color: var(--vermelho);
+}
+
+.btn-outline-gym:hover {
+    background-color: var(--vermelho);
+    color: #fff;
+}
+
+footer {
+    background-color: var(--vermelho);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+
+.bg-vermelho {
+    background-color: var(--vermelho);
+}
+
+.card {
+    border-radius: 12px;
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0;
+}
+
+.form-control,
+.form-select {
+    border-radius: 8px;
+}
+
+.card-footer a:hover {
+    text-decoration: underline;
 }

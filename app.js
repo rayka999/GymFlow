@@ -25,6 +25,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/usuario',usuarioRouter);
 app.use('/exercicio',exercicioRouter);
+app.use('/usuario/exercicio', exercicioRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

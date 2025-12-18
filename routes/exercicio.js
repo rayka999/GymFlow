@@ -127,7 +127,7 @@ router.post('/add', function(req, res) {
         serie_padrao, repeticoes_padrao, descanso_padrao
     ], function(err) {
         if (err) return res.send(err);
-        res.redirect('/exercicio');
+        res.redirect('/usuario/exercicio');
     });
 });
 

@@ -1,0 +1,38 @@
+body {
+    background-color: #f5f5f5;
+}
+
+.btn-main {
+    background-color: #b30000;
+    color: white;
+    border-radius: 12px;
+    padding: 15px;
+    font-weight: 500;
+}
+
+.btn-main:hover {
+    background-color: #8f0000;
+    color: white;
+}
+
+.bottom-nav {
+    background-color: white;
+    border-top: 1px solid #ddd;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.bottom-nav a {
+    color: #555;
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+.bottom-nav a:hover {
+    color: #b30000;
+}
+
+.icon-big {
+    font-size: 1.6rem;
+}

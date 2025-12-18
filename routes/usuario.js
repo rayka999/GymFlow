@@ -136,4 +136,12 @@ router.post('/cadastro', (req, res) => {
     });
 });
 
+router.get('/login', function(req, res) {
+  res.render('usuario-login');
+});
+
+router.get('/opcoes',function(req,res){
+    res.render('aluno-options')
+});
+
 module.exports = router;
