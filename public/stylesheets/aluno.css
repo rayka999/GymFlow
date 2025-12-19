@@ -36,3 +36,22 @@ body {
 .icon-big {
     font-size: 1.6rem;
 }
+
+.btn-gymflow {
+    background-color: #ce0101 !important;
+    border-color: #ce0101 !important;
+    color: white !important;
+}
+
+.btn-gymflow:hover {
+    background-color: #8f0000 !important;
+    border-color: #8f0000 !important;
+    color: white !important;
+}
+
+.btn-gymflow:focus,
+.btn-gymflow:active {
+    background-color: #8f0000 !important;
+    border-color: #8f0000 !important;
+    box-shadow: none !important;
+}
