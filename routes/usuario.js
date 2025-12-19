@@ -140,8 +140,20 @@ router.get('/login', function(req, res) {
   res.render('usuario-login');
 });
 
+router.get('/inicio',function(req,res) {
+    res.render('aluno-home')
+});
+
 router.get('/opcoes',function(req,res){
     res.render('aluno-options')
 });
+
+router.get('/estatisticas',function (req,res){
+    res.render('aluno-est')
+});
+
+router.get('/conta',function(req,res){
+    res.render('aluno-account')
+})
 
 module.exports = router;
