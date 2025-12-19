@@ -1,17 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estatísticas</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <link rel="stylesheet" href="/stylesheets/aluno.css">
 </head>
 <body>
-    
+
+<div class="container py-4 mb-5">
+
+    <h3 class="mb-4">
+        <i class="bi bi-graph-up"></i> Estatísticas
+    </h3>
+
+    <div class="row mb-4 text-center">
+
+        <div class="col-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <i class="bi bi-barbell fs-2"></i>
+                    <h6 class="mt-2">Total de Treinos</h6>
+                    <p class="fs-4"><%= totalTreinos %></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <i class="bi bi-calendar-week fs-2"></i>
+                    <h6 class="mt-2">Esta Semana</h6>
+                    <p class="fs-4"><%= treinosSemana %></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <i class="bi bi-calendar-month fs-2"></i>
+                    <h6 class="mt-2">Este Mês</h6>
+                    <p class="fs-4"><%= treinosMes %></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Histórico de Treinos</h5>
+
+            <% if (historicoTreinos.length > 0) { %>
+                <ul class="list-group list-group-flush">
+                    <% historicoTreinos.forEach(treino => { %>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>
+                                <strong><%= treino.nome %></strong><br>
+                                <small class="text-muted"><%= treino.data %></small>
+                            </span>
+                            <span class="badge bg-success">
+                                Concluído
+                            </span>
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <p class="text-muted">Nenhum treino registrado.</p>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="alert alert-info text-center">
+        Continue treinando! Seu progresso está sendo registrado.
+    </div>
+
+</div>
+
+<nav class="bottom-nav py-2">
+    <div class="container">
+        <div class="row text-center">
+
+            <div class="col">
+                <a href="/usuario/inicio">
+                    <i class="bi bi-house icon-big"></i><br>
+                    Início
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="/usuario/opcoes">
+                    <i class="bi bi-grid-3x3-gap icon-big"></i><br>
+                    Opções
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="/usuario/estatisticas" class="active">
+                    <i class="bi bi-arrow-up-right icon-big"></i><br>
+                    Estatísticas
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="/usuario/conta">
+                    <i class="bi bi-person icon-big"></i><br>
+                    Conta
+                </a>
+            </div>
+
+        </div>
+    </div>
+</nav>
+
 </body>
 </html>
