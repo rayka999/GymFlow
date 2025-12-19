@@ -88,6 +88,15 @@ footer {
     border-radius: 12px 12px 0 0;
 }
 
+.card-section {
+  background-color: #3f3f3f;
+  color: var(--cinza-claro);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
 .form-control,
 .form-select {
     border-radius: 8px;

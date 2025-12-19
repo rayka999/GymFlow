@@ -1,11 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Início</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/stylesheets/aluno.css">
 </head>
 <body>
-    
+
+<div class="container py-4 mb-5">
+
+    <h4 class="mb-3">
+        Olá, <strong><%= usuario.nome %></strong>
+    </h4>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">
+                <i class="bi bi-barbell"></i> Treino do dia
+            </h5>
+
+            <% if (treinoHoje) { %>
+                <p><strong>Nome:</strong> <%= treinoHoje.nome %></p>
+                <p><strong>Grupo muscular:</strong> <%= treinoHoje.grupo_muscular %></p>
+                <p><strong>Duração estimada:</strong> <%= treinoHoje.duracao %> min</p>
+
+                <a href="/usuario/treino/<%= treinoHoje.id %>" class="btn btn-success w-100">
+                    Iniciar treino
+                </a>
+            <% } else { %>
+                <p class="text-muted">Nenhum treino disponível para hoje.</p>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+
+        <div class="col-6">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="bi bi-calendar-check fs-2"></i>
+                    <h6 class="mt-2">Treinos na semana</h6>
+                    <p class="fs-4"><%= treinosSemana %></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="bi bi-clock-history fs-2"></i>
+                    <h6 class="mt-2">Último treino</h6>
+                    <p class="fs-6">
+                        <%= ultimoTreino ? ultimoTreino.data : 'Nenhum' %>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Atalhos rápidos</h5>
+
+            <div class="d-grid gap-2">
+                <a href="/usuario/treino" class="btn btn-outline-primary">
+                    <i class="bi bi-barbell"></i> Meus Treinos
+                </a>
+
+                <a href="/usuario/estatisticas" class="btn btn-outline-secondary">
+                    <i class="bi bi-graph-up"></i> Ver Estatísticas
+                </a>
+
+                <a href="/usuario/conta" class="btn btn-outline-dark">
+                    <i class="bi bi-person"></i> Minha Conta
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<nav class="bottom-nav py-2">
+    <div class="container">
+        <div class="row text-center">
+
+            <div class="col">
+                <a href="/usuario/inicio" class="active">
+                    <i class="bi bi-house icon-big"></i><br>
+                    Início
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="/usuario/treino">
+                    <i class="bi bi-barbell icon-big"></i><br>
+                    Treino
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="/usuario/estatisticas">
+                    <i class="bi bi-arrow-up-right icon-big"></i><br>
+                    Estatísticas
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="/usuario/conta">
+                    <i class="bi bi-person icon-big"></i><br>
+                    Conta
+                </a>
+            </div>
+
+        </div>
+    </div>
+</nav>
+
 </body>
 </html>
