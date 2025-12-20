@@ -25,7 +25,10 @@
                 <div class="card-body">
                     <i class="bi bi-barbell fs-2"></i>
                     <h6 class="mt-2">Total de Treinos</h6>
-                    <p class="fs-4"><%= totalTreinos %></p>
+
+                </div>
+                <div class="alert alert-info text-center">
+                    Continue treinando! Seu progresso está sendo registrado.
                 </div>
             </div>
         </div>
@@ -35,52 +38,11 @@
                 <div class="card-body">
                     <i class="bi bi-calendar-week fs-2"></i>
                     <h6 class="mt-2">Esta Semana</h6>
-                    <p class="fs-4"><%= treinosSemana %></p>
+                  
                 </div>
             </div>
         </div>
-
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <i class="bi bi-calendar-month fs-2"></i>
-                    <h6 class="mt-2">Este Mês</h6>
-                    <p class="fs-4"><%= treinosMes %></p>
-                </div>
-            </div>
-        </div>
-
     </div>
-
-    <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Histórico de Treinos</h5>
-
-            <% if (historicoTreinos.length > 0) { %>
-                <ul class="list-group list-group-flush">
-                    <% historicoTreinos.forEach(treino => { %>
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>
-                                <strong><%= treino.nome %></strong><br>
-                                <small class="text-muted"><%= treino.data %></small>
-                            </span>
-                            <span class="badge bg-success">
-                                Concluído
-                            </span>
-                        </li>
-                    <% }) %>
-                </ul>
-            <% } else { %>
-                <p class="text-muted">Nenhum treino registrado.</p>
-            <% } %>
-        </div>
-    </div>
-
-    <div class="alert alert-info text-center">
-        Continue treinando! Seu progresso está sendo registrado.
-    </div>
-
-</div>
 
 <nav class="bottom-nav py-2">
     <div class="container">

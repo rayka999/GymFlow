@@ -22,8 +22,14 @@
                 </div>
 
                 <div class="card-body">
+                    
+                    <% if (typeof erro !== 'undefined') { %>
+                        <div class="alert alert-danger text-center">
+                            <%= erro %>
+                        </div>
+                    <% } %>
 
-                    <form action="/">
+                    <form action="/login" method="POST">
                         <div class="mb-3">
                             <label class="form-label">Entrar como:</label>
                             <select name="typeUser" id="typeUser" class="form-select">
@@ -33,7 +39,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <input type="email" name="email" class="form-control" required placeholder="Nome de usuário ou e-mail">
+                            <input type="text" name="email" class="form-control" required placeholder="Nome de usuário ou e-mail">
                         </div>
 
                         <div class="mb-3">
@@ -47,7 +53,7 @@
                 </div>
 
                 <div class="card-footer text-center">
-                    <a href="http://localhost:3000/usuario/cadastro" class="small">Criar uma conta</a>
+                    <a href="http://localhost:3000/cadastro" class="small">Criar uma conta</a>
                 </div>
 
             </div>

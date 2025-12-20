@@ -23,31 +23,44 @@
             <h5 class="card-title">Dados da Conta</h5>
 
             <p><strong>Nome:</strong> <%= usuario.nome %></p>
-            <p><strong>Usuário:</strong> <%= usuario.username %></p>
+            <p><strong>Usuário:</strong> <%= usuario.user_name %></p>
             <p><strong>E-mail:</strong> <%= usuario.email %></p>
             <p><strong>Tipo de conta:</strong> Aluno</p>
-            <p><strong>Conta criada em:</strong> <%= usuario.data_criacao %></p>
+            <p><strong>Conta criada em:</strong> <%= new Date(usuario.criado_em).toLocaleDateString('pt-BR') %></p>
         </div>
     </div>
 
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title">Editar Dados</h5>
+            <h5 class="card-title d-flex justify-content-between align-items-center">
+                Editar Dados
+                <button class="btn btn-outline-primary btn-sm" type="button"
+                        onclick="toggleForm('form-editar-dados')">
+                    <i class="bi bi-pencil"></i> Editar
+                </button>
+            </h5>
 
-            <form action="/usuario/conta/editar" method="POST">
+            <form id="form-editar-dados"
+                action="/usuario/conta/editar"
+                method="POST"
+                class="d-none mt-3">
+
                 <div class="mb-3">
                     <label class="form-label">Nome</label>
-                    <input type="text" name="nome" class="form-control" value="<%= usuario.nome %>" required>
+                    <input type="text" name="nome" class="form-control"
+                        value="<%= usuario.nome %>" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Nome de usuário</label>
-                    <input type="text" name="username" class="form-control" value="<%= usuario.username %>" required>
+                    <input type="text" name="username" class="form-control"
+                        value="<%= usuario.user_name %>" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">E-mail</label>
-                    <input type="email" name="email" class="form-control" value="<%= usuario.email %>" required>
+                    <input type="email" name="email" class="form-control"
+                        value="<%= usuario.email %>" required>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">
@@ -59,9 +72,19 @@
 
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title">Segurança</h5>
+            <h5 class="card-title d-flex justify-content-between align-items-center">
+                Segurança
+                <button class="btn btn-outline-warning btn-sm" type="button"
+                        onclick="toggleForm('form-alterar-senha')">
+                    <i class="bi bi-shield-lock"></i> Alterar senha
+                </button>
+            </h5>
 
-            <form action="/usuario/conta/senha" method="POST">
+            <form id="form-alterar-senha"
+                action="/usuario/conta/senha"
+                method="POST"
+                class="d-none mt-3">
+
                 <div class="mb-3">
                     <label class="form-label">Nova senha</label>
                     <input type="password" name="senha" class="form-control" required>
@@ -83,8 +106,8 @@
         <div class="card-body">
             <h5 class="card-title">Informações</h5>
 
-            <p><strong>Total de treinos realizados:</strong> <%= totalTreinos %></p>
-            <p><strong>Último acesso:</strong> <%= usuario.ultimo_acesso %></p>
+            <p><strong>Total de treinos realizados:</strong></p>
+            <p><strong>Último treino realizado:</strong></p>
         </div>
     </div>
 
@@ -131,6 +154,13 @@
         </div>
     </div>
 </nav>
+
+<script>
+    function toggleForm(id) {
+        const form = document.getElementById(id);
+        form.classList.toggle('d-none');
+    }
+</script>
 
 </body>
 </html>
