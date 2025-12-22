@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Início</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/stylesheets/aluno.css">
+</head>
+<body>
+
+<div class="container py-4 mb-5">
+
+    <h4 class="mb-3">
+        Olá, <strong><%= usuario.nome %></strong>
+    </h4>
+
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Atalhos rápidos</h5>
+
+            <div class="d-grid gap-2">
+                <a href="/usuario/conta" class="btn btn-outline-dark">
+                    <i class="bi bi-person"></i> Minha Conta
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<nav class="bottom-nav py-2">
+    <div class="container">
+        <div class="row text-center">
+
+            <div class="col">
+                <a href="/usuario/inicio" class="active">
+                    <i class="bi bi-house icon-big"></i><br>
+                    Início
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="/usuario/opcoes">
+                    <i class="bi bi-grid-3x3-gap icon-big"></i><br>
+                    Opções
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="/usuario/estatisticas">
+                    <i class="bi bi-arrow-up-right icon-big"></i><br>
+                    Alunos
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="/usuario/conta">
+                    <i class="bi bi-person icon-big"></i><br>
+                    Conta
+                </a>
+            </div>
+
+        </div>
+    </div>
+</nav>
+
+</body>
+</html>
