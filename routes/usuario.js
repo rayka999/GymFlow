@@ -33,7 +33,7 @@ router.get('/opcoes',alunoAuth, function (req,res){
     });
 });
 
-router.get('/estatisticas',function (req,res){
+router.get('/estatisticas',alunoAuth,function (req,res){
     res.render('aluno-est', {
         usuario: req.session.usuario
     });
@@ -65,7 +65,7 @@ router.get('/conta', alunoAuth, function(req, res) {
     });
 });
 
-router.get('/logout', (req, res) => {
+router.get('/logout',alunoAuth, (req, res) => {
     req.session.destroy(() => {
         res.redirect('/login');
     });

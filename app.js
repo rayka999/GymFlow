@@ -34,6 +34,7 @@ app.use('/usuario',usuarioRouter);
 app.use('/exercicio',exercicioRouter);
 app.use('/instrutor',instrutorRouter);
 app.use('/usuario/exercicio', exercicioRouter);
+app.use('/instrutor/exercicio', exercicioRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
