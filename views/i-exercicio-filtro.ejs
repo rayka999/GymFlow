@@ -13,10 +13,10 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Exercícios</h2>
-        <a href="/usuario/exercicio/add" class="btn btn-success">+ Criar Exercício</a>
+        <a href="/instrutor/opcoes/exercicio/add" class="btn btn-success">+ Criar Exercício</a>
     </div>
 
-    <form method="GET" action="/usuario/exercicio" class="row g-3 mb-4">
+    <form method="GET" action="/instrutor/opcoes/exercicio" class="row g-3 mb-4">
 
         <div class="col-md-4">
             <label class="form-label">Categoria</label>
@@ -53,7 +53,7 @@
     <% } else { %>
         <div class="list-group">
             <% exercicios.forEach(e => { %>
-                <a href="/usuario/exercicio/<%= e.id_exercicio %>" 
+                <a href="/instrutor/opcoes/exercicio/<%= e.id_exercicio %>" 
                 class="list-group-item list-group-item-action">
                     <strong><%= e.nome %></strong><br>
                     <small class="text-muted"><%= e.categoria %> • <%= e.musculo %></small>
@@ -64,34 +64,33 @@
 
 </div>
 
-
-<nav class="bottom-nav py-2" style="z-index: 2;">
+<nav class="bottom-nav py-2">
     <div class="container">
         <div class="row text-center">
 
             <div class="col">
-                <a href="/usuario/inicio">
+                <a href="/instrutor/inicio">
                     <i class="bi bi-house icon-big"></i><br>
                     Início
                 </a>
             </div>
 
             <div class="col">
-                <a href="/usuario/opcoes">
+                <a href="/instrutor/opcoes">
                     <i class="bi bi-grid-3x3-gap icon-big"></i><br>
                     Opções
                 </a>
             </div>
 
             <div class="col">
-                <a href="/usuario/estatisticas">
-                    <i class="bi bi-arrow-up-right icon-big"></i><br>
-                    Estatísticas
+                <a href="/instrutor/alunos">
+                    <i class="bi bi-people icon-big"></i><br>
+                    Alunos
                 </a>
             </div>
 
             <div class="col">
-                <a href="/usuario/conta">
+                <a href="/instrutor/conta" class="active">
                     <i class="bi bi-person icon-big"></i><br>
                     Conta
                 </a>

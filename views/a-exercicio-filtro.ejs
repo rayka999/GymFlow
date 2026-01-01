@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercícios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/aluno.css">
+</head>
+<body class="bg-light">
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Exercícios</h2>
+        <a href="/usuario/opcoes/exercicio/add" class="btn btn-success">+ Criar Exercício</a>
+    </div>
+
+    <form method="GET" action="/usuario/opcoes/exercicio" class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <label class="form-label">Categoria</label>
+            <select name="categoria" class="form-select" onchange="this.form.submit()">
+                <option value="0">Todas</option>
+                <% categorias.forEach(c => { %>
+                    <option value="<%= c.id_categoria %>" <%= idCategoria == c.id_categoria ? 'selected' : '' %>>
+                        <%= c.nome %>
+                    </option>
+                <% }) %>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Músculo</label>
+            <select name="musculo" class="form-select">
+                <option value="0">Todos</option>
+                <% musculos.forEach(m => { %>
+                    <option value="<%= m.id_musculo %>" <%= idMusculo == m.id_musculo ? 'selected' : '' %>>
+                        <%= m.nome %>
+                    </option>
+                <% }) %>
+            </select>
+        </div>
+
+        <div class="col-md-4 d-flex align-items-end">
+            <button class="btn btn-gymflow w-100">Filtrar</button>
+        </div>
+
+    </form>
+
+    <% if (exercicios.length === 0) { %>
+        <p class="text-muted">Nenhum exercício encontrado.</p>
+    <% } else { %>
+        <div class="list-group">
+            <% exercicios.forEach(e => { %>
+                <a href="/usuario/opcoes/exercicio/<%= e.id_exercicio %>" 
+                class="list-group-item list-group-item-action">
+                    <strong><%= e.nome %></strong><br>
+                    <small class="text-muted"><%= e.categoria %> • <%= e.musculo %></small>
+                </a>
+            <% }) %>
+        </div>
+    <% } %>
+
+</div>
+
+
+<nav class="bottom-nav py-2" style="z-index: 2;">
+    <div class="container">
+        <div class="row text-center">
+
+            <div class="col">
+                <a href="/usuario/inicio">
+                    <i class="bi bi-house icon-big"></i><br>
+                    Início
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="/usuario/opcoes">
+                    <i class="bi bi-grid-3x3-gap icon-big"></i><br>
+                    Opções
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="/usuario/estatisticas">
+                    <i class="bi bi-arrow-up-right icon-big"></i><br>
+                    Estatísticas
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="/usuario/conta">
+                    <i class="bi bi-person icon-big"></i><br>
+                    Conta
+                </a>
+            </div>
+
+        </div>
+    </div>
+</nav>
+
+</body>
+</html>
