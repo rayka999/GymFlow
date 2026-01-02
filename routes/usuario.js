@@ -225,4 +225,69 @@ router.get('/opcoes/exercicio/:id_exercicio', alunoAuth, (req,res) =>{
     });
 })
 
+router.get('/opcoes/treino/publico',alunoAuth, function (req,res){
+    res.render('treino-publico', {
+        usuario: req.session.usuario
+    });
+});
+
+router.post('/opcoes/treino/publico', alunoAuth, function (req, res) {
+
+    const id_criador = req.session.usuario.id;
+    const { nome, descricao } = req.body;
+
+    const sql_treino = `
+        INSERT INTO treino 
+        (id_criador, criador_tipo, criado_em, descricao, nome, publico)
+        VALUES (?, 1, CURRENT_TIMESTAMP, ?, ?, 1)
+    `;
+
+    db.query(sql_treino, [id_criador, descricao, nome], function (err) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Erro ao criar treino');
+        }
+
+        res.redirect('/meus-treinos');
+    });
+});
+
+router.get('/meus-treinos', alunoAuth, (req, res) => {
+
+    const idAluno = req.session.usuario.id;
+
+    const sqlPublicos = `
+        SELECT * FROM treino
+        WHERE id_criador = ?
+          AND criador_tipo = 1
+          AND publico = 1
+    `;
+
+    const sqlPrivados = `
+        SELECT * FROM treino
+        WHERE id_criador = ?
+          AND criador_tipo = 1
+          AND publico = 0
+    `;
+
+    db.query(sqlPublicos, [idAluno], (err, treinosPublicos) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Erro ao buscar treinos públicos');
+        }
+
+        db.query(sqlPrivados, [idAluno], (err, treinosPrivados) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Erro ao buscar treinos privados');
+            }
+
+            res.render('aluno-treinos', {
+                treinosPublicos,
+                treinosPrivados
+            });
+        });
+    });
+});
+
 module.exports = router;

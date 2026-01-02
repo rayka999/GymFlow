@@ -2,45 +2,45 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Opções</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Novo Treino</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
     <link rel="stylesheet" href="/stylesheets/aluno.css">
 </head>
 
-<body>
+<body class="bg-light">
+<div class="container py-4">
+    <div class="card shadow">
+        <div class="card-body">
 
-<div class="container py-4 mb-5">
+            <h3 class="mb-4 text-center">Criar Novo Treino Público</h3>
 
-    <div class="d-grid gap-3 mb-4">
-        <a href="/usuario/opcoes/treino/personalizado" class="btn btn-main">
-            + Criar treino personalizado
-        </a>
+            <form action="/usuario/opcoes/treino/publico" method="POST" class="row g-3">
 
-        <a href="/usuario/opcoes/treino/publico" class="btn btn-main">
-            + Criar treino público
-        </a>
+                <div class="mb-3">
+                    <label class="form-label">Nome do treino</label>
+                    <input type="text" name="nome" class="form-control" required>
+                </div>
 
-        <a href="/usuario/meus-treinos" class="btn btn-outline-primary">
-            <i class="bi bi-barbell"></i> Meus Treinos
-        </a>
+                <div class="mb-3">
+                    <label class="form-label">Descrição</label>
+                    <textarea name="descricao" class="form-control" rows="3" required></textarea>
+                </div>
 
-        <a href="/usuario/opcoes/exercicio" class="btn btn-outline-secondary">
-            <i class="bi bi-search"></i> Explorar exercícios
-        </a>
+                <button type="submit" class="btn btn-gymflow w-100">
+                    Criar Treino
+                </button>
+
+            </form>
+
+        </div>
     </div>
-
-    <div class="text-center text-muted">
-        <p>Escolha uma opção para continuar</p>
-    </div>
-
 </div>
 
-<nav class="bottom-nav py-2">
+
+<nav class="bottom-nav py-2" style="z-index: 2;">
     <div class="container">
         <div class="row text-center">
 
