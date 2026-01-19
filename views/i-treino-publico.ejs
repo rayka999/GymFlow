@@ -2,47 +2,41 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Opções | Instrutor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Novo Treino</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
     <link rel="stylesheet" href="/stylesheets/aluno.css">
 </head>
 
-<body>
+<body class="bg-light">
+<div class="container py-4">
+    <div class="card shadow">
+        <div class="card-body">
 
-<div class="container py-4 mb-5">
+            <h3 class="mb-4 text-center">Criar Novo Treino Público</h3>
 
-    <h4 class="mb-4">
-        <i class="bi bi-grid-3x3-gap"></i> Opções do Instrutor
-    </h4>
+            <form action="/instrutor/opcoes/treino/publico" method="POST" class="row g-3">
 
-    <div class="d-grid gap-3 mb-4">
+                <div class="mb-3">
+                    <label class="form-label">Nome do treino</label>
+                    <input type="text" name="nome" class="form-control" required>
+                </div>
 
-        <a href="/instrutor/opcoes/treino/publico" class="btn btn-main">
-            <i class="bi bi-plus-circle"></i> Criar treino público
-        </a>
+                <div class="mb-3">
+                    <label class="form-label">Descrição</label>
+                    <textarea name="descricao" class="form-control" rows="3" required></textarea>
+                </div>
 
-        <a href="/treino/personalizado" class="btn btn-main">
-            <i class="bi bi-person-check"></i> Criar treino para aluno
-        </a>
+                <button type="submit" class="btn btn-gymflow w-100">
+                    Criar Treino
+                </button>
 
-        <a href="/instrutor/meus-treinos" class="btn btn-outline-primary">
-            <i class="bi bi-people"></i> Meus Treinos
-        </a>
+            </form>
 
-        <a href="/instrutor/opcoes/exercicio" class="btn btn-outline-secondary">
-            <i class="bi bi-search"></i> Explorar exercícios
-        </a>
-
+        </div>
     </div>
-
-    <div class="text-center text-muted">
-        <p>Escolha uma opção para continuar</p>
-    </div>
-
 </div>
 
 <nav class="bottom-nav py-2">
@@ -57,7 +51,7 @@
             </div>
 
             <div class="col">
-                <a href="/instrutor/opcoes" class="active">
+                <a href="/instrutor/opcoes">
                     <i class="bi bi-grid-3x3-gap icon-big"></i><br>
                     Opções
                 </a>
@@ -71,7 +65,7 @@
             </div>
 
             <div class="col">
-                <a href="/instrutor/conta">
+                <a href="/instrutor/conta" class="active">
                     <i class="bi bi-person icon-big"></i><br>
                     Conta
                 </a>
