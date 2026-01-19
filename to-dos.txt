@@ -19,3 +19,4 @@ inicio
 Geral
 -scroll de treinos públicos
 -mudar infos das contas (marina)
+- adicionar multiplos exercicios com select 2 (algo assim n lembro teve na aula hj)
