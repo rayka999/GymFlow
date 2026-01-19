@@ -1,0 +1,21 @@
+Instrutor (ágata e gabi)
+1. página inicial
+-listar alunos vinculados
+- add butao e rota pro scroll de treinos públicos
+2. opções
+-treino aluno
+-associar treinos a alunos
+3. alunos
+-lista de alunos com infos
+- atribuir treinos
+4. conta (esperar marina)
+
+Aluno (rayka e mariana)
+conta
+-post da senha
+-post dados complementares
+inicio
+
+Geral
+-scroll de treinos públicos
+-mudar infos das contas (marina)
