@@ -1,13 +1,14 @@
 Instrutor (ágata e gabi)
 1. página inicial
--listar alunos vinculados
+-listar alunos vinculados (prioridade)
 - add butao e rota pro scroll de treinos públicos
 2. opções
--treino aluno
--associar treinos a alunos
+-treino aluno (prioridade)
+{gerenciar, info alunos, atribuir treino}
+-associar treinos a alunos (prioridade)
 3. alunos
--lista de alunos com infos
-- atribuir treinos
+-lista de alunos com infos (prioridade)
+- atribuir treinos (prioridade)
 4. conta (esperar marina)
 
 Aluno (rayka e mariana)
@@ -16,7 +17,10 @@ conta
 -post dados complementares
 inicio
 
+view dos treinos personalizados
+
 Geral
 -scroll de treinos públicos
 -mudar infos das contas (marina)
 - adicionar multiplos exercicios com select 2 (algo assim n lembro teve na aula hj)
+-criptografia das senhas e email

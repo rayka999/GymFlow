@@ -22,6 +22,38 @@
             ← Voltar para meus treinos
         </a>
     </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+            Adicionar exercício
+        </div>
+
+        <div class="card-body">
+            <form action="/instrutor/treino/exercicio/add" method="POST">
+
+                <input type="hidden" name="id_treino" value="<%= treino.id_treino %>">
+
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label">Exercício</label>
+                        <select name="id_exercicio" class="form-select" required>
+                            <% exercicios.forEach(ex => { %>
+                                <option value="<%= ex.id_exercicio %>">
+                                    <%= ex.nome %>
+                                </option>
+                            <% }) %>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn btn-danger w-100 mt-3">
+                    Adicionar exercício
+                </button>
+
+            </form>
+        </div>
+    </div>
+    <br><br>
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-danger text-white">
             Exercícios do treino
@@ -79,38 +111,9 @@
             </ul>
         <% } %>
     </div>
-
-    <div class="card shadow-sm">
-        <div class="card-header bg-secondary text-white">
-            Adicionar exercício
-        </div>
-
-        <div class="card-body">
-            <form action="/instrutor/treino/exercicio/add" method="POST">
-
-                <input type="hidden" name="id_treino" value="<%= treino.id_treino %>">
-
-                <div class="row g-3">
-                    <div class="col-md-8">
-                        <label class="form-label">Exercício</label>
-                        <select name="id_exercicio" class="form-select" required>
-                            <% exercicios.forEach(ex => { %>
-                                <option value="<%= ex.id_exercicio %>">
-                                    <%= ex.nome %>
-                                </option>
-                            <% }) %>
-                        </select>
-                    </div>
-                </div>
-
-                <button class="btn btn-danger w-100 mt-3">
-                    Adicionar exercício
-                </button>
-
-            </form>
-        </div>
-    </div>
 </div>
+
+
 
 <nav class="bottom-nav py-2">
     <div class="container">
