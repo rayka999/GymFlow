@@ -252,6 +252,58 @@ router.post('/opcoes/treino/publico', alunoAuth, function (req, res) {
     });
 });
 
+router.get('/opcoes/treino/personalizado',alunoAuth, function (req,res){
+    res.render('treino-personalizado', {
+        usuario: req.session.usuario
+    });
+});
+
+router.post('/opcoes/treino/personalizado', alunoAuth, function (req, res) {
+
+    const id_criador = req.session.usuario.id;
+
+    const {
+        nome,
+        descricao,
+        dia_semana
+    } = req.body;
+
+    const sql_treino = `
+        INSERT INTO treino 
+        (id_criador, criador_tipo, criado_em, descricao, nome, publico)
+        VALUES (?, 1, CURRENT_TIMESTAMP, ?, ?, 0)
+    `;
+
+    db.query(sql_treino, [id_criador, descricao, nome], function (err, result) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Erro ao criar treino');
+        }
+
+        const id_treino = result.insertId;
+
+        const sql_personalizado = `
+            INSERT INTO treino_personalizado
+            ( id_treino, id_aluno, dia_semana)
+            VALUES (?, ?, ?, ?)
+        `;
+
+        db.query(
+            sql_personalizado,
+            [ id_treino, id_criador, dia_semana],
+            function (err) {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Erro ao vincular treino');
+                }
+
+                res.redirect('/usuario/meus-treinos');
+            }
+        );
+    });
+});
+
+
 router.get('/meus-treinos', alunoAuth, (req, res) => {
 
     const idAluno = req.session.usuario.id;

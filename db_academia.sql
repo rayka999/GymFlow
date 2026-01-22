@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 17/12/2025 às 22:54
--- Versão do servidor: 10.4.32-MariaDB
--- Versão do PHP: 8.2.12
+-- Tempo de geração: 22-Jan-2026 às 14:04
+-- Versão do servidor: 10.4.27-MariaDB
+-- versão do PHP: 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `aluno`
+-- Estrutura da tabela `aluno`
 --
 
 CREATE TABLE `aluno` (
@@ -36,10 +36,17 @@ CREATE TABLE `aluno` (
   `id_instrutor` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Extraindo dados da tabela `aluno`
+--
+
+INSERT INTO `aluno` (`id_aluno`, `peso_atual`, `altura`, `objetivo`, `restricoes`, `id_instrutor`) VALUES
+(1, '80.00', '180.00', 'ganho de massa muscular', 'Nada', NULL);
+
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `categoria_exercicio`
+-- Estrutura da tabela `categoria_exercicio`
 --
 
 CREATE TABLE `categoria_exercicio` (
@@ -49,7 +56,7 @@ CREATE TABLE `categoria_exercicio` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Despejando dados para a tabela `categoria_exercicio`
+-- Extraindo dados da tabela `categoria_exercicio`
 --
 
 INSERT INTO `categoria_exercicio` (`id_categoria`, `nome`, `coluna_regiao`) VALUES
@@ -67,7 +74,7 @@ INSERT INTO `categoria_exercicio` (`id_categoria`, `nome`, `coluna_regiao`) VALU
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `conta_login`
+-- Estrutura da tabela `conta_login`
 --
 
 CREATE TABLE `conta_login` (
@@ -80,10 +87,18 @@ CREATE TABLE `conta_login` (
   `user_name` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Extraindo dados da tabela `conta_login`
+--
+
+INSERT INTO `conta_login` (`id_login`, `id_pessoa`, `email`, `senha_hash`, `tipo`, `criado_em`, `user_name`) VALUES
+(1, 1, 'fufu@gmail.com', '#fufubarao', 1, '2026-01-19 13:42:00', 'fulanildo_123'),
+(2, 2, 'adyrq@ls', '1234', 2, '2026-01-19 14:52:30', 'aa');
+
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `exercicio`
+-- Estrutura da tabela `exercicio`
 --
 
 CREATE TABLE `exercicio` (
@@ -99,7 +114,7 @@ CREATE TABLE `exercicio` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Despejando dados para a tabela `exercicio`
+-- Extraindo dados da tabela `exercicio`
 --
 
 INSERT INTO `exercicio` (`id_exercicio`, `nome`, `descricao`, `id_musculo`, `url`, `tipo_midia`, `serie_padrao`, `repeticoes_padrao`, `descanso_padrao`) VALUES
@@ -128,7 +143,7 @@ INSERT INTO `exercicio` (`id_exercicio`, `nome`, `descricao`, `id_musculo`, `url
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `instrutor`
+-- Estrutura da tabela `instrutor`
 --
 
 CREATE TABLE `instrutor` (
@@ -137,10 +152,17 @@ CREATE TABLE `instrutor` (
   `experiencia_anos` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Extraindo dados da tabela `instrutor`
+--
+
+INSERT INTO `instrutor` (`id_instrutor`, `especialidade`, `experiencia_anos`) VALUES
+(2, 'pé', 3);
+
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `meta_aluno`
+-- Estrutura da tabela `meta_aluno`
 --
 
 CREATE TABLE `meta_aluno` (
@@ -156,7 +178,7 @@ CREATE TABLE `meta_aluno` (
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `musculo`
+-- Estrutura da tabela `musculo`
 --
 
 CREATE TABLE `musculo` (
@@ -166,7 +188,7 @@ CREATE TABLE `musculo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Despejando dados para a tabela `musculo`
+-- Extraindo dados da tabela `musculo`
 --
 
 INSERT INTO `musculo` (`id_musculo`, `nome`, `id_categoria`) VALUES
@@ -197,7 +219,7 @@ INSERT INTO `musculo` (`id_musculo`, `nome`, `id_categoria`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `personal_record`
+-- Estrutura da tabela `personal_record`
 --
 
 CREATE TABLE `personal_record` (
@@ -213,7 +235,7 @@ CREATE TABLE `personal_record` (
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `pessoa`
+-- Estrutura da tabela `pessoa`
 --
 
 CREATE TABLE `pessoa` (
@@ -223,10 +245,18 @@ CREATE TABLE `pessoa` (
   `sexo` tinyint(4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Extraindo dados da tabela `pessoa`
+--
+
+INSERT INTO `pessoa` (`id_pessoa`, `nome`, `data_nascimento`, `sexo`) VALUES
+(1, 'Fulano de Tal', '2002-02-02', 2),
+(2, 'a', '8731-09-21', 2);
+
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `serie_realizada`
+-- Estrutura da tabela `serie_realizada`
 --
 
 CREATE TABLE `serie_realizada` (
@@ -242,7 +272,7 @@ CREATE TABLE `serie_realizada` (
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `treino`
+-- Estrutura da tabela `treino`
 --
 
 CREATE TABLE `treino` (
@@ -255,10 +285,22 @@ CREATE TABLE `treino` (
   `criado_em` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Extraindo dados da tabela `treino`
+--
+
+INSERT INTO `treino` (`id_treino`, `nome`, `descricao`, `criador_tipo`, `id_criador`, `publico`, `criado_em`) VALUES
+(1, 'Treino de Braço', 'Treino de braço com foco em bíceps e tríceps', 1, 1, 1, '2026-01-19 14:43:28'),
+(2, 'Costas', 'vgedh', 1, 1, 1, '2026-01-21 13:59:16'),
+(3, 'Peito', 'gearhgaeh', 2, 2, 1, '2026-01-21 14:03:33'),
+(4, 'Treino de pernas e glúteo', 'fkawfjibawjkvg', 1, 1, 1, '2026-01-22 12:34:24'),
+(6, 'treino de costas', 'gawrgeargb', 1, 1, 1, '2026-01-22 12:37:26'),
+(7, 'hwagiohrgiob', 'haerheah', 1, 1, 0, '2026-01-22 12:37:42');
+
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `treino_exercicio`
+-- Estrutura da tabela `treino_exercicio`
 --
 
 CREATE TABLE `treino_exercicio` (
@@ -271,28 +313,36 @@ CREATE TABLE `treino_exercicio` (
   `descanso_sugerido` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Extraindo dados da tabela `treino_exercicio`
+--
+
+INSERT INTO `treino_exercicio` (`id_treino_exercicio`, `id_treino`, `id_exercicio`, `ordem`, `serie_sugerida`, `repeticoes_sugerida`, `descanso_sugerido`) VALUES
+(1, 1, 9, 1, 3, 12, 45),
+(3, 2, 1, 2, 4, 10, 60),
+(4, 2, 2, 1, 4, 10, 60),
+(5, 3, 1, 1, 4, 10, 60),
+(7, 7, 3, 1, 3, 12, 45),
+(9, 7, 11, 2, 4, 12, 60),
+(10, 7, 17, 3, 1, 1, 0);
+
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `treino_exercicio_personalizado`
+-- Estrutura da tabela `treino_personalizado`
 --
 
-CREATE TABLE `treino_exercicio_personalizado` (
-  `id_personalizado` int(11) NOT NULL,
-  `id_treino_exercicio` int(11) NOT NULL,
+CREATE TABLE `treino_personalizado` (
+  `id_treino` int(11) NOT NULL,
   `id_aluno` int(11) NOT NULL,
-  `dia_semana` tinyint(4) NOT NULL,
-  `serie` int(11) DEFAULT NULL,
-  `repeticoes` int(11) DEFAULT NULL,
-  `peso` decimal(6,2) DEFAULT NULL,
-  `descanso` int(11) DEFAULT NULL,
-  `observacoes` text DEFAULT NULL
+  `dia_semana` enum('SEGUNDA','TERCA','QUARTA','QUINTA','SEXTA','SABADO','DOMINGO') NOT NULL,
+  `id_personalizado` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `treino_realizado`
+-- Estrutura da tabela `treino_realizado`
 --
 
 CREATE TABLE `treino_realizado` (
@@ -310,20 +360,20 @@ CREATE TABLE `treino_realizado` (
 --
 
 --
--- Índices de tabela `aluno`
+-- Índices para tabela `aluno`
 --
 ALTER TABLE `aluno`
   ADD PRIMARY KEY (`id_aluno`),
   ADD KEY `id_instrutor` (`id_instrutor`);
 
 --
--- Índices de tabela `categoria_exercicio`
+-- Índices para tabela `categoria_exercicio`
 --
 ALTER TABLE `categoria_exercicio`
   ADD PRIMARY KEY (`id_categoria`);
 
 --
--- Índices de tabela `conta_login`
+-- Índices para tabela `conta_login`
 --
 ALTER TABLE `conta_login`
   ADD PRIMARY KEY (`id_login`),
@@ -332,20 +382,20 @@ ALTER TABLE `conta_login`
   ADD KEY `id_pessoa` (`id_pessoa`);
 
 --
--- Índices de tabela `exercicio`
+-- Índices para tabela `exercicio`
 --
 ALTER TABLE `exercicio`
   ADD PRIMARY KEY (`id_exercicio`),
   ADD KEY `id_musculo` (`id_musculo`);
 
 --
--- Índices de tabela `instrutor`
+-- Índices para tabela `instrutor`
 --
 ALTER TABLE `instrutor`
   ADD PRIMARY KEY (`id_instrutor`);
 
 --
--- Índices de tabela `meta_aluno`
+-- Índices para tabela `meta_aluno`
 --
 ALTER TABLE `meta_aluno`
   ADD PRIMARY KEY (`id_meta`),
@@ -353,14 +403,14 @@ ALTER TABLE `meta_aluno`
   ADD KEY `id_exercicio` (`id_exercicio`);
 
 --
--- Índices de tabela `musculo`
+-- Índices para tabela `musculo`
 --
 ALTER TABLE `musculo`
   ADD PRIMARY KEY (`id_musculo`),
   ADD KEY `id_categoria` (`id_categoria`);
 
 --
--- Índices de tabela `personal_record`
+-- Índices para tabela `personal_record`
 --
 ALTER TABLE `personal_record`
   ADD PRIMARY KEY (`id_pr`),
@@ -368,13 +418,13 @@ ALTER TABLE `personal_record`
   ADD KEY `id_exercicio` (`id_exercicio`);
 
 --
--- Índices de tabela `pessoa`
+-- Índices para tabela `pessoa`
 --
 ALTER TABLE `pessoa`
   ADD PRIMARY KEY (`id_pessoa`);
 
 --
--- Índices de tabela `serie_realizada`
+-- Índices para tabela `serie_realizada`
 --
 ALTER TABLE `serie_realizada`
   ADD PRIMARY KEY (`id_serie_realizada`),
@@ -382,14 +432,14 @@ ALTER TABLE `serie_realizada`
   ADD KEY `id_exercicio` (`id_exercicio`);
 
 --
--- Índices de tabela `treino`
+-- Índices para tabela `treino`
 --
 ALTER TABLE `treino`
   ADD PRIMARY KEY (`id_treino`),
   ADD KEY `id_criador` (`id_criador`);
 
 --
--- Índices de tabela `treino_exercicio`
+-- Índices para tabela `treino_exercicio`
 --
 ALTER TABLE `treino_exercicio`
   ADD PRIMARY KEY (`id_treino_exercicio`),
@@ -397,15 +447,14 @@ ALTER TABLE `treino_exercicio`
   ADD KEY `id_exercicio` (`id_exercicio`);
 
 --
--- Índices de tabela `treino_exercicio_personalizado`
+-- Índices para tabela `treino_personalizado`
 --
-ALTER TABLE `treino_exercicio_personalizado`
+ALTER TABLE `treino_personalizado`
   ADD PRIMARY KEY (`id_personalizado`),
-  ADD KEY `id_treino_exercicio` (`id_treino_exercicio`),
-  ADD KEY `id_aluno` (`id_aluno`);
+  ADD KEY `id_treino` (`id_treino`);
 
 --
--- Índices de tabela `treino_realizado`
+-- Índices para tabela `treino_realizado`
 --
 ALTER TABLE `treino_realizado`
   ADD PRIMARY KEY (`id_treino_realizado`),
@@ -413,7 +462,7 @@ ALTER TABLE `treino_realizado`
   ADD KEY `id_treino` (`id_treino`);
 
 --
--- AUTO_INCREMENT para tabelas despejadas
+-- AUTO_INCREMENT de tabelas despejadas
 --
 
 --
@@ -426,7 +475,7 @@ ALTER TABLE `categoria_exercicio`
 -- AUTO_INCREMENT de tabela `conta_login`
 --
 ALTER TABLE `conta_login`
-  MODIFY `id_login` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_login` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de tabela `exercicio`
@@ -456,7 +505,7 @@ ALTER TABLE `personal_record`
 -- AUTO_INCREMENT de tabela `pessoa`
 --
 ALTER TABLE `pessoa`
-  MODIFY `id_pessoa` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_pessoa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de tabela `serie_realizada`
@@ -468,18 +517,18 @@ ALTER TABLE `serie_realizada`
 -- AUTO_INCREMENT de tabela `treino`
 --
 ALTER TABLE `treino`
-  MODIFY `id_treino` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_treino` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de tabela `treino_exercicio`
 --
 ALTER TABLE `treino_exercicio`
-  MODIFY `id_treino_exercicio` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_treino_exercicio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT de tabela `treino_exercicio_personalizado`
+-- AUTO_INCREMENT de tabela `treino_personalizado`
 --
-ALTER TABLE `treino_exercicio_personalizado`
+ALTER TABLE `treino_personalizado`
   MODIFY `id_personalizado` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -489,83 +538,82 @@ ALTER TABLE `treino_realizado`
   MODIFY `id_treino_realizado` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- Restrições para tabelas despejadas
+-- Restrições para despejos de tabelas
 --
 
 --
--- Restrições para tabelas `aluno`
+-- Limitadores para a tabela `aluno`
 --
 ALTER TABLE `aluno`
   ADD CONSTRAINT `aluno_ibfk_1` FOREIGN KEY (`id_aluno`) REFERENCES `conta_login` (`id_login`),
   ADD CONSTRAINT `aluno_ibfk_2` FOREIGN KEY (`id_instrutor`) REFERENCES `instrutor` (`id_instrutor`);
 
 --
--- Restrições para tabelas `conta_login`
+-- Limitadores para a tabela `conta_login`
 --
 ALTER TABLE `conta_login`
   ADD CONSTRAINT `conta_login_ibfk_1` FOREIGN KEY (`id_pessoa`) REFERENCES `pessoa` (`id_pessoa`);
 
 --
--- Restrições para tabelas `exercicio`
+-- Limitadores para a tabela `exercicio`
 --
 ALTER TABLE `exercicio`
   ADD CONSTRAINT `exercicio_ibfk_1` FOREIGN KEY (`id_musculo`) REFERENCES `musculo` (`id_musculo`);
 
 --
--- Restrições para tabelas `instrutor`
+-- Limitadores para a tabela `instrutor`
 --
 ALTER TABLE `instrutor`
   ADD CONSTRAINT `instrutor_ibfk_1` FOREIGN KEY (`id_instrutor`) REFERENCES `conta_login` (`id_login`);
 
 --
--- Restrições para tabelas `meta_aluno`
+-- Limitadores para a tabela `meta_aluno`
 --
 ALTER TABLE `meta_aluno`
   ADD CONSTRAINT `meta_aluno_ibfk_1` FOREIGN KEY (`id_aluno`) REFERENCES `aluno` (`id_aluno`),
   ADD CONSTRAINT `meta_aluno_ibfk_2` FOREIGN KEY (`id_exercicio`) REFERENCES `exercicio` (`id_exercicio`);
 
 --
--- Restrições para tabelas `musculo`
+-- Limitadores para a tabela `musculo`
 --
 ALTER TABLE `musculo`
   ADD CONSTRAINT `musculo_ibfk_1` FOREIGN KEY (`id_categoria`) REFERENCES `categoria_exercicio` (`id_categoria`);
 
 --
--- Restrições para tabelas `personal_record`
+-- Limitadores para a tabela `personal_record`
 --
 ALTER TABLE `personal_record`
   ADD CONSTRAINT `personal_record_ibfk_1` FOREIGN KEY (`id_aluno`) REFERENCES `aluno` (`id_aluno`),
   ADD CONSTRAINT `personal_record_ibfk_2` FOREIGN KEY (`id_exercicio`) REFERENCES `exercicio` (`id_exercicio`);
 
 --
--- Restrições para tabelas `serie_realizada`
+-- Limitadores para a tabela `serie_realizada`
 --
 ALTER TABLE `serie_realizada`
   ADD CONSTRAINT `serie_realizada_ibfk_1` FOREIGN KEY (`id_treino_realizado`) REFERENCES `treino_realizado` (`id_treino_realizado`),
   ADD CONSTRAINT `serie_realizada_ibfk_2` FOREIGN KEY (`id_exercicio`) REFERENCES `exercicio` (`id_exercicio`);
 
 --
--- Restrições para tabelas `treino`
+-- Limitadores para a tabela `treino`
 --
 ALTER TABLE `treino`
   ADD CONSTRAINT `treino_ibfk_1` FOREIGN KEY (`id_criador`) REFERENCES `conta_login` (`id_login`);
 
 --
--- Restrições para tabelas `treino_exercicio`
+-- Limitadores para a tabela `treino_exercicio`
 --
 ALTER TABLE `treino_exercicio`
   ADD CONSTRAINT `treino_exercicio_ibfk_1` FOREIGN KEY (`id_treino`) REFERENCES `treino` (`id_treino`),
   ADD CONSTRAINT `treino_exercicio_ibfk_2` FOREIGN KEY (`id_exercicio`) REFERENCES `exercicio` (`id_exercicio`);
 
 --
--- Restrições para tabelas `treino_exercicio_personalizado`
+-- Limitadores para a tabela `treino_personalizado`
 --
-ALTER TABLE `treino_exercicio_personalizado`
-  ADD CONSTRAINT `treino_exercicio_personalizado_ibfk_1` FOREIGN KEY (`id_treino_exercicio`) REFERENCES `treino_exercicio` (`id_treino_exercicio`),
-  ADD CONSTRAINT `treino_exercicio_personalizado_ibfk_2` FOREIGN KEY (`id_aluno`) REFERENCES `aluno` (`id_aluno`);
+ALTER TABLE `treino_personalizado`
+  ADD CONSTRAINT `treino_personalizado_ibfk_1` FOREIGN KEY (`id_treino`) REFERENCES `treino` (`id_treino`);
 
 --
--- Restrições para tabelas `treino_realizado`
+-- Limitadores para a tabela `treino_realizado`
 --
 ALTER TABLE `treino_realizado`
   ADD CONSTRAINT `treino_realizado_ibfk_1` FOREIGN KEY (`id_aluno`) REFERENCES `aluno` (`id_aluno`),
