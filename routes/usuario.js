@@ -284,8 +284,8 @@ router.post('/opcoes/treino/personalizado', alunoAuth, function (req, res) {
 
         const sql_personalizado = `
             INSERT INTO treino_personalizado
-            ( id_treino, id_aluno, dia_semana)
-            VALUES (?, ?, ?, ?)
+            ( id_treino, id_aluno, dia_semana,observacoes)
+            VALUES (?, ?, ?, NULL )
         `;
 
         db.query(
@@ -303,7 +303,6 @@ router.post('/opcoes/treino/personalizado', alunoAuth, function (req, res) {
     });
 });
 
-
 router.get('/meus-treinos', alunoAuth, (req, res) => {
 
     const idAluno = req.session.usuario.id;
@@ -316,10 +315,16 @@ router.get('/meus-treinos', alunoAuth, (req, res) => {
     `;
 
     const sqlPrivados = `
-        SELECT * FROM treino
-        WHERE id_criador = ?
-          AND criador_tipo = 1
-          AND publico = 0
+        SELECT 
+            t.*,
+            p.dia_semana
+        FROM treino t
+        INNER JOIN treino_personalizado p
+            ON p.id_treino = t.id_treino
+        WHERE t.id_criador = ?
+          AND t.criador_tipo = 1
+          AND t.publico = 0
+          AND p.id_aluno = ?
     `;
 
     db.query(sqlPublicos, [idAluno], (err, treinosPublicos) => {
@@ -328,10 +333,10 @@ router.get('/meus-treinos', alunoAuth, (req, res) => {
             return res.status(500).send('Erro ao buscar treinos públicos');
         }
 
-        db.query(sqlPrivados, [idAluno], (err, treinosPrivados) => {
+        db.query(sqlPrivados, [idAluno, idAluno], (err, treinosPrivados) => {
             if (err) {
                 console.error(err);
-                return res.status(500).send('Erro ao buscar treinos privados');
+                return res.status(500).send('Erro ao buscar treinos personalizados');
             }
 
             res.render('aluno-treinos', {

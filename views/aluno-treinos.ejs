@@ -59,10 +59,17 @@
                         <div class="card h-100 shadow-sm border-secondary">
                             <div class="card-body">
                                 <h6 class="card-title"><%= treino.nome %></h6>
+                            
+                                <p class="text-primary small mb-1">
+                                    <i class="bi bi-calendar-week"></i>
+                                    <strong><%= treino.dia_semana %></strong>
+                                </p>
+                            
                                 <p class="card-text text-muted small">
                                     <%= treino.descricao %>
                                 </p>
                             </div>
+                            
 
                             <div class="card-footer bg-white border-0">
                                 <a href="/usuario/treino/<%= treino.id_treino %>/exercicios"

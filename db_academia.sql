@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 22-Jan-2026 às 14:04
+-- Tempo de geração: 22-Jan-2026 às 18:23
 -- Versão do servidor: 10.4.27-MariaDB
 -- versão do PHP: 8.2.0
 
@@ -336,7 +336,8 @@ CREATE TABLE `treino_personalizado` (
   `id_treino` int(11) NOT NULL,
   `id_aluno` int(11) NOT NULL,
   `dia_semana` enum('SEGUNDA','TERCA','QUARTA','QUINTA','SEXTA','SABADO','DOMINGO') NOT NULL,
-  `id_personalizado` int(11) NOT NULL
+  `id_personalizado` int(11) NOT NULL,
+  `observacoes` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
