@@ -43,24 +43,42 @@ router.get('/conta', alunoAuth, function(req, res) {
 
     const id_login = req.session.usuario.id;
 
-    const sql = `
+    const sqlConta = `
         SELECT c.*, p.nome
         FROM conta_login c
         INNER JOIN pessoa p ON p.id_pessoa = c.id_pessoa
         WHERE c.id_login = ?;
     `;
 
-    db.query(sql, [id_login], (erro, resultado) => {
-        if (erro) {
+    const sqlInstrutores = `
+        SELECT i.id_instrutor, p.nome
+        FROM instrutor i
+        INNER JOIN pessoa p ON p.id_pessoa = i.id_instrutor
+    `;
+
+    db.query(sqlConta, [id_login], (erroConta, resultadoConta) => {
+        if (erroConta || resultadoConta.length === 0) {
             return res.render('aluno-account', {
                 usuario: null,
+                instrutores: [],
                 erro: 'Erro ao carregar dados da conta.'
             });
         }
 
-        res.render('aluno-account', {
-            usuario: resultado[0],
-            erro: null
+        db.query(sqlInstrutores, (erroInstrutores, instrutores) => {
+            if (erroInstrutores) {
+                return res.render('aluno-account', {
+                    usuario: resultadoConta[0],
+                    instrutores: [],
+                    erro: 'Erro ao carregar instrutores.'
+                });
+            }
+
+            res.render('aluno-account', {
+                usuario: resultadoConta[0],
+                instrutores: instrutores,
+                erro: null
+            });
         });
     });
 });
@@ -600,5 +618,50 @@ router.get('/treino/exercicio/:id/down', alunoAuth, function (req, res) {
         });
     });
 });
+
+router.put('/aluno/dados', alunoAuth, function (req, res) {
+
+    const id_aluno = req.session.usuario.id;
+
+    const {
+        peso_atual,
+        altura,
+        objetivo,
+        restricoes,
+        id_instrutor
+    } = req.body;
+
+    const sqlUpdate = `
+        UPDATE aluno
+        SET
+            peso_atual = ?,
+            altura = ?,
+            objetivo = ?,
+            restricoes = ?,
+            id_instrutor = ?
+        WHERE id_aluno = ?
+    `;
+
+    db.query(
+        sqlUpdate,
+        [
+            peso_atual,
+            altura,
+            objetivo,
+            restricoes,
+            id_instrutor || null,
+            id_aluno
+        ],
+        function (err) {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Erro ao atualizar dados do aluno');
+            }
+
+            res.redirect('/usuario/conta');
+        }
+    );
+});
+
 
 module.exports = router;
