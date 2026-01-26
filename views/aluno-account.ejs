@@ -30,66 +30,82 @@
         </div>
     </div>
 
-    <form action="/usuario/aluno/dados?_method=PUT" method="POST">
-    
-        <div>
-            <label for="peso_atual">Peso atual (kg)</label>
-            <input
-                type="number"
-                step="0.01"
-                name="peso_atual"
-                id="peso_atual"
-                required
-            >
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title d-flex justify-content-between align-items-center">
+                Dados do aluno
+                <button class="btn btn-outline-warning btn-sm" type="button"
+                        onclick="toggleForm('form-alterar-dados')">
+                    <i class="bi bi-pencil"></i> Atualizar dados
+                </button>
+            </h5>
         </div>
     
-        <div>
-            <label for="altura">Altura (cm)</label>
-            <input
-                type="number"
-                step="0.01"
-                name="altura"
-                id="altura"
-                required
-            >
+        <div id="form-alterar-dados" class="card-body d-none">
+            <form action="/usuario/aluno/dados?_method=PUT" method="POST">
+                <div class="mb-3">
+                    <label for="peso_atual" class="form-label">Peso atual (kg)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="peso_atual"
+                        id="peso_atual"
+                        class="form-control"
+                        required
+                    >
+                </div>
+    
+                <div class="mb-3">
+                    <label for="altura" class="form-label">Altura (cm)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="altura"
+                        id="altura"
+                        class="form-control"
+                        required
+                    >
+                </div>
+    
+                <div class="mb-3">
+                    <label for="objetivo" class="form-label">Objetivo</label>
+                    <input
+                        type="text"
+                        name="objetivo"
+                        id="objetivo"
+                        class="form-control"
+                        required
+                    >
+                </div>
+    
+                <div class="mb-3">
+                    <label for="restricoes" class="form-label">Restrições</label>
+                    <textarea
+                        name="restricoes"
+                        id="restricoes"
+                        rows="3"
+                        class="form-control"
+                    ></textarea>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="id_instrutor" class="form-label">Instrutor</label>
+                    <select name="id_instrutor" id="id_instrutor" class="form-select">
+                        <option value="">Selecione um instrutor</option>
+                        <% instrutores.forEach(i => { %>
+                            <option value="<%= i.id_instrutor %>">
+                                <%= i.nome %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+    
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-warning w-100">Salvar alterações</button>
+                </div>
+            </form>
         </div>
-    
-        <div>
-            <label for="objetivo">Objetivo</label>
-            <input
-                type="text"
-                name="objetivo"
-                id="objetivo"
-                required
-            >
-        </div>
-    
-        <div>
-            <label for="restricoes">Restrições</label>
-            <textarea
-                name="restricoes"
-                id="restricoes"
-                rows="3"
-            ></textarea>
-        </div>
-    
-        <div>
-            <label for="id_instrutor">Instrutor</label>
-            <select name="id_instrutor">
-                <option value="">Selecione um instrutor</option>
-                <% instrutores.forEach(i => { %>
-                    <option value="<%= i.id_instrutor %>">
-                        <%= i.nome %>
-                    </option>
-                <% }) %>
-            </select>
-            
-        </div>
-    
-        <button type="submit">Salvar alterações</button>
-    
-    </form>
-    
+    </div>
 
     <div class="card mb-4">
         <div class="card-body">
