@@ -34,10 +34,46 @@ router.get('/opcoes', instrutorAuth, (req, res) => {
 });
 
 router.get('/alunos', instrutorAuth, (req, res) => {
-    res.render('instrutor-alunos', {
-        usuario: req.session.usuario
+    const id_instrutor = req.session.usuario.id;
+
+    const sql = `
+    SELECT a.*, p.nome
+    FROM aluno AS a
+    INNER JOIN conta_login AS c
+        ON a.id_aluno = c.id_login
+    INNER JOIN pessoa AS p
+        ON c.id_pessoa = p.id_pessoa
+    WHERE a.id_instrutor = ?;
+    `;
+
+    db.query(sql, [id_instrutor], (erro, resultados) => {
+        if (erro) {
+            console.error(erro);
+            return res.status(500).send('Erro ao buscar alunos');
+        }
+
+        res.render('instrutor-alunos', {
+            usuario: req.session.usuario,
+            alunos: resultados
+        });
     });
 });
+
+router.get('/aluno/desvincular/:id_aluno', instrutorAuth,function(req,res) {
+    let id_aluno=req.params.id_aluno
+    let sql=`
+    UPDATE aluno
+    SET id_instrutor= null
+    WHERE id_aluno=?`;
+    db.query(sql, [id_aluno], (erro) => {
+        if (erro) {
+            console.error(erro);
+            return res.status(500).send('Erro ao buscar alunos');
+        }
+        res.redirect('/instrutor/alunos');
+    });
+})
+
 
 router.get('/conta', instrutorAuth, function (req, res) {
     const id_login = req.session.usuario.id;
