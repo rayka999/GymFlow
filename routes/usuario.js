@@ -619,6 +619,49 @@ router.get('/treino/exercicio/:id/down', alunoAuth, function (req, res) {
     });
 });
 
+router.post('/treino/:id_treino/excluir', alunoAuth, function (req, res) {
+    const id_treino = req.params.id_treino;
+    const id_aluno=req.session.usuario.id;
+
+    const sqlPersonalizado = `
+        DELETE FROM treino_personalizado
+        WHERE id_treino = ? AND id_aluno = ?;
+    `;
+
+    const sqlExercicios = `
+        DELETE FROM treino_exercicio
+        WHERE id_treino = ?;
+    `;
+
+    const sqlTreino = `
+        DELETE FROM treino
+        WHERE id_treino = ?;
+    `;
+
+    db.query(sqlPersonalizado, [id_treino, id_aluno], (erro) => {
+        if (erro) {
+            console.error(erro);
+            return res.status(500).send('Erro ao excluir treino personalizado');
+        }
+
+        db.query(sqlExercicios, [id_treino], (erro) => {
+            if (erro) {
+                console.error(erro);
+                return res.status(500).send('Erro ao excluir exercícios do treino');
+            }
+            db.query(sqlTreino, [id_treino], (erro) => {
+                if (erro) {
+                    console.error(erro);
+                    return res.status(500).send('Erro ao excluir treino');
+                }
+
+                res.redirect('/usuario/meus-treinos');
+            });
+        });
+    });
+});
+
+
 router.put('/aluno/dados', alunoAuth, function (req, res) {
 
     const id_aluno = req.session.usuario.id;

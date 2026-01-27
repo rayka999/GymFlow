@@ -68,7 +68,7 @@ router.get('/aluno/desvincular/:id_aluno', instrutorAuth,function(req,res) {
     db.query(sql, [id_aluno], (erro) => {
         if (erro) {
             console.error(erro);
-            return res.status(500).send('Erro ao buscar alunos');
+            return res.status(500).send('Erro ao desvincular aluno');
         }
         res.redirect('/instrutor/alunos');
     });

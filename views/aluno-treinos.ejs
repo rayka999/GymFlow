@@ -34,12 +34,20 @@
                                 </p>
                             </div>
 
-                            <div class="card-footer bg-white border-0">
+                            <div class="card-footer bg-white border-0 d-flex gap-2">
                                 <a href="/usuario/treino/<%= treino.id_treino %>/exercicios"
-                                   class="btn btn-gymflow w-100">
+                                   class="btn btn-gymflow flex-fill">
                                     Abrir Treino
                                 </a>
+                            
+                                <form action="/usuario/treino/<%= treino.id_treino %>/excluir" method="POST"
+                                      onsubmit="return confirm('Tem certeza que deseja excluir este treino?')">
+                                    <button type="submit" class="btn btn-outline-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
                             </div>
+                            
                         </div>
                     </div>
                 <% }) %>
@@ -71,12 +79,30 @@
                             </div>
                             
 
-                            <div class="card-footer bg-white border-0">
+                            <div class="card-footer bg-white border-0 d-flex flex-column gap-2">
+
                                 <a href="/usuario/treino/<%= treino.id_treino %>/exercicios"
                                    class="btn btn-outline-secondary w-100">
                                     Abrir Treino
                                 </a>
+                            
+                                <form action="/usuario/treino/<%= treino.id_treino %>/concluir" method="POST">
+                                    <button type="submit" class="btn btn-success w-100">
+                                        <i class="bi bi-check-circle"></i>
+                                        Marcar como concluído
+                                    </button>
+                                </form>
+                            
+                                <form action="/usuario/treino/<%= treino.id_treino %>/excluir" method="POST"
+                                      onsubmit="return confirm('Tem certeza que deseja excluir este treino?')">
+                                    <button type="submit" class="btn btn-outline-danger w-100">
+                                        <i class="bi bi-trash"></i>
+                                        Excluir
+                                    </button>
+                                </form>
+                            
                             </div>
+                            
                         </div>
                     </div>
                 <% }) %>
