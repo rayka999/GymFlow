@@ -3,26 +3,110 @@ var router = express.Router();
 var db = require('../utils/db');
 const alunoAuth = require('../middlewares/aluno_auth');
 
-router.get('/inicio', alunoAuth, function (req, res) {
-    const id_login=req.session.usuario.id;
+// Função auxiliar para converter dia da semana em português MAIÚSCULO
+function getDiaSemanaAtual() {
+    const dias = ['DOMINGO', 'SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO'];
+    return dias[new Date().getDay()];
+}
 
-    const sql = `
+// Rota principal do dashboard
+router.get('/inicio', alunoAuth, function (req, res) {
+    const id_aluno = req.session.usuario.id;
+    const diaAtual = getDiaSemanaAtual();
+
+    console.log("=== DEBUG DASHBOARD ===");
+    console.log("ID aluno:", id_aluno);
+    console.log("Dia atual:", diaAtual);
+
+    // 1. Dados do usuário
+    const sqlUsuario = `
         SELECT c.*, p.nome
         FROM conta_login c
         INNER JOIN pessoa p ON p.id_pessoa = c.id_pessoa
         WHERE c.id_login = ?;
     `;
 
-    db.query(sql, [id_login], (erro, resultado) => {
-        if (erro) {
+    db.query(sqlUsuario, [id_aluno], (erroUsuario, resultadoUsuario) => {
+        if (erroUsuario) {
+            console.error("Erro usuário:", erroUsuario);
             return res.render('aluno-home', {
-                usuario: null,
-                erro: 'Erro ao carregar dados da conta.'
+                usuario: { nome: 'Aluno' },
+                proximoTreino: null,
+                treinosSemana: 0
             });
         }
-        res.render('aluno-home', {
-            usuario: resultado[0],
-            erro: null
+
+        const usuario = resultadoUsuario && resultadoUsuario.length > 0 ? resultadoUsuario[0] : { nome: 'Aluno' };
+        
+        // 2. Busca PRÓXIMO TREINO
+        // Primeiro, busca todos os treinos do aluno
+        const sqlTodosTreinos = `
+            SELECT t.id_treino, t.nome, tp.dia_semana
+            FROM treino t
+            INNER JOIN treino_personalizado tp ON t.id_treino = tp.id_treino
+            WHERE tp.id_aluno = ?
+            ORDER BY FIELD(tp.dia_semana, 
+                'SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO', 'DOMINGO'
+            );
+        `;
+
+        db.query(sqlTodosTreinos, [id_aluno], (erroTreinos, todosTreinos) => {
+            let proximoTreino = null;
+            
+            if (!erroTreinos && todosTreinos && todosTreinos.length > 0) {
+                console.log("Todos os treinos encontrados:", todosTreinos);
+                
+                const diasSemana = ['SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO', 'DOMINGO'];
+                const indexAtual = diasSemana.indexOf(diaAtual);
+                
+                // Procura o próximo treino (começando do dia seguinte)
+                for (let offset = 1; offset <= 7; offset++) {
+                    const proximoIndex = (indexAtual + offset) % 7;
+                    const diaProcurado = diasSemana[proximoIndex];
+                    
+                    const treinoEncontrado = todosTreinos.find(t => t.dia_semana === diaProcurado);
+                    if (treinoEncontrado) {
+                        proximoTreino = treinoEncontrado;
+                        console.log("Próximo treino definido:", proximoTreino);
+                        break;
+                    }
+                }
+                
+                // Se não encontrou, usa o primeiro da lista
+                if (!proximoTreino) {
+                    proximoTreino = todosTreinos[0];
+                    console.log("Usando primeiro treino:", proximoTreino);
+                }
+            } else {
+                console.log("Nenhum treino encontrado para o aluno");
+            }
+            
+            // 3. Busca TREINOS NA SEMANA
+            const sqlTreinosSemana = `
+                SELECT COUNT(*) as total
+                FROM treino_realizado tr
+                WHERE tr.id_aluno = ?
+                AND tr.data_treino >= DATE_SUB(CURDATE(), INTERVAL 7 DAY);
+            `;
+            
+            db.query(sqlTreinosSemana, [id_aluno], (erroContagem, resultadoContagem) => {
+                let treinosSemana = 0;
+                if (!erroContagem && resultadoContagem && resultadoContagem.length > 0) {
+                    treinosSemana = resultadoContagem[0].total || 0;
+                }
+                
+                console.log("=== DADOS PARA RENDER ===");
+                console.log("Usuário:", usuario.nome);
+                console.log("Próximo treino:", proximoTreino);
+                console.log("Treinos semana:", treinosSemana);
+                
+                // RENDERIZAÇÃO FINAL - garantindo que todas as variáveis existam
+                res.render('aluno-home', {
+                    usuario: usuario || { nome: 'Aluno' },
+                    proximoTreino: proximoTreino || null,
+                    treinosSemana: treinosSemana || 0
+                });
+            });
         });
     });
 });
