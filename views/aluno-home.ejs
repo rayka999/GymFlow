@@ -15,43 +15,52 @@
 <div class="container py-4 mb-5">
 
     <h4 class="mb-3">
-        Olá, <strong><%= usuario.nome.split(' ')[0] %></strong>
+        Olá, <strong><%= usuario ? usuario.nome.split(' ')[0] : 'Aluno' %></strong>
     </h4>
 
+    <!-- Card: Próximo treino -->
     <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="card-title">
-                <i class="bi bi-barbell"></i> Treino do dia
-            </h5>
+        <div class="card-body text-center">
+            <i class="bi bi-calendar-plus fs-1 text-primary mb-3"></i>
+            <h5 class="card-title">Próximo treino</h5>
+            
+            <% if (proximoTreino) { %>
+                <p class="fs-3 fw-bold mb-2">
+                    <%= proximoTreino.nome %>
+                </p>
+                <p class="text-muted mb-3">
+                    <i class="bi bi-calendar"></i>
+                    <%= proximoTreino.dia_semana.charAt(0) + proximoTreino.dia_semana.slice(1).toLowerCase() %>
+                </p>
+                <a href="/usuario/treino/<%= proximoTreino.id_treino %>/exercicios" 
+                   class="btn btn-primary">
+                    <i class="bi bi-play-circle"></i> Começar treino
+                </a>
+            <% } else { %>
+                <p class="fs-4 text-muted mb-3">Nenhum treino agendado</p>
+                <a href="/usuario/opcoes/treino/personalizado" 
+                   class="btn btn-outline-primary">
+                    <i class="bi bi-plus-circle"></i> Criar primeiro treino
+                </a>
+            <% } %>
         </div>
     </div>
 
     <div class="row mb-4">
-
-        <div class="col-6">
+        <!-- Card: Treinos na semana -->
+        <div class="col-12">
             <div class="card text-center">
                 <div class="card-body">
-                    <i class="bi bi-calendar-check fs-2"></i>
+                    <i class="bi bi-bar-chart fs-2 text-success"></i>
                     <h6 class="mt-2">Treinos na semana</h6>
-                    
+                    <p class="fs-4 fw-bold mb-0"><%= treinosSemana %></p>
+                    <small class="text-muted">últimos 7 dias</small>
                 </div>
             </div>
         </div>
-
-        <div class="col-6">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="bi bi-clock-history fs-2"></i>
-                    <h6 class="mt-2">Último treino</h6>
-                    <p class="fs-6">
-                        
-                    </p>
-                </div>
-            </div>
-        </div>
-
     </div>
 
+    <!-- Card: Atalhos rápidos -->
     <div class="card mb-4">
         <div class="card-body">
             <h5 class="card-title">Atalhos rápidos</h5>
