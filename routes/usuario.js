@@ -662,7 +662,7 @@ router.post('/treino/:id_treino/excluir', alunoAuth, function (req, res) {
 });
 
 
-router.put('/aluno/dados', alunoAuth, function (req, res) {
+router.put('/dados', alunoAuth, function (req, res) {
 
     const id_aluno = req.session.usuario.id;
 
@@ -704,6 +704,58 @@ router.put('/aluno/dados', alunoAuth, function (req, res) {
             res.redirect('/usuario/conta');
         }
     );
+});
+
+router.post('/conta/senha', alunoAuth, function (req, res) {
+
+    const id_login = req.session.usuario.id;
+    const { senha_atual, nova_senha, confirmar_senha } = req.body;
+
+    if (!senha_atual || !nova_senha || !confirmar_senha) {
+        req.session.erroConta = 'Preencha todos os campos.';
+        return res.redirect('/usuario/conta');
+    }
+
+    if (nova_senha !== confirmar_senha) {
+        req.session.erroConta = 'As novas senhas não conferem.';
+        return res.redirect('/usuario/conta');
+    }
+
+    const sqlBusca = `
+        SELECT senha_hash
+        FROM conta_login
+        WHERE id_login = ?;
+    `;
+
+    db.query(sqlBusca, [id_login], (err, result) => {
+        if (err || result.length === 0) {
+            req.session.erroConta = 'Erro ao verificar senha atual.';
+            return res.redirect('/usuario/conta');
+        }
+
+        const senhaBanco = result[0].senha_hash;
+
+        if (senha_atual !== senhaBanco) {
+            req.session.erroConta = 'Senha atual incorreta.';
+            return res.redirect('/usuario/conta');
+        }
+
+        const sqlUpdate = `
+            UPDATE conta_login
+            SET senha_hash = ?
+            WHERE id_login = ?;
+        `;
+
+        db.query(sqlUpdate, [nova_senha, id_login], (err) => {
+            if (err) {
+                req.session.erroConta = 'Erro ao atualizar senha.';
+                return res.redirect('/usuario/conta');
+            }
+
+            req.session.sucessoConta = 'Senha alterada com sucesso!';
+            res.redirect('/usuario/conta');
+        });
+    });
 });
 
 

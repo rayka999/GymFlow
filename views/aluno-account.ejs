@@ -42,7 +42,7 @@
         </div>
     
         <div id="form-alterar-dados" class="card-body d-none">
-            <form action="/usuario/aluno/dados?_method=PUT" method="POST">
+            <form action="/usuario/dados?_method=PUT" method="POST">
                 <div class="mb-3">
                     <label for="peso_atual" class="form-label">Peso atual (kg)</label>
                     <input
@@ -117,24 +117,38 @@
                 </button>
             </h5>
 
-            <form id="form-alterar-senha"
-                action="/usuario/conta/senha"
-                method="POST"
-                class="d-none mt-3">
-
+            <form id="form-alterar-senha" action="/usuario/conta/senha" method="POST" class="d-none mt-3">
                 <div class="mb-3">
-                    <label class="form-label">Nova senha</label>
-                    <input type="password" name="senha" class="form-control" required>
+                    <label for="senha_atual" class="form-label">Senha atual</label>
+                    <input 
+                        type="password" 
+                        class="form-control" 
+                        id="senha_atual" 
+                        name="senha_atual" 
+                        required
+                    >
                 </div>
-
                 <div class="mb-3">
-                    <label class="form-label">Confirmar senha</label>
-                    <input type="password" name="confirmar_senha" class="form-control" required>
+                    <label for="nova_senha" class="form-label">Nova senha</label>
+                    <input 
+                        type="password" 
+                        class="form-control" 
+                        id="nova_senha" 
+                        name="nova_senha" 
+                        required
+                    >
                 </div>
-
-                <button type="submit" class="btn btn-warning w-100">
-                    Alterar senha
-                </button>
+                <div class="mb-3">
+                    <label for="confirmar_senha" class="form-label">Confirmar nova senha</label>
+                    <input 
+                        type="password" 
+                        class="form-control" 
+                        id="confirmar_senha" 
+                        name="confirmar_senha" 
+                        required
+                    >
+                </div>                
+                <button type="submit" class="btn btn-warning w-100">Alterar senha</button>
             </form>
         </div>
     </div>
