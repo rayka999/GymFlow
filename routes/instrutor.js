@@ -5,24 +5,42 @@ const instrutorAuth = require('../middlewares/instrutor_auth');
 router.get('/inicio', instrutorAuth, function (req, res) {
     const id_login = req.session.usuario.id;
 
-    const sql = `
+    const sqlUsuario = `
         SELECT c.*, p.nome
         FROM conta_login c
         INNER JOIN pessoa p ON p.id_pessoa = c.id_pessoa
         WHERE c.id_login = ?;
     `;
 
-    db.query(sql, [id_login], (erro, resultado) => {
+    const sqlAlunos = `
+        SELECT COUNT(*) AS totalAlunos
+        FROM aluno
+        WHERE id_instrutor = ?;
+    `;
+
+    db.query(sqlUsuario, [id_login], (erro, resultadoUsuario) => {
         if (erro) {
             return res.render('instrutor-home', {
                 usuario: null,
+                totalAlunos: 0,
                 erro: 'Erro ao carregar dados da conta.'
             });
         }
 
-        res.render('instrutor-home', {
-            usuario: resultado[0],
-            erro: null
+        db.query(sqlAlunos, [id_login], (erro, resultadoAlunos) => {
+            if (erro) {
+                return res.render('instrutor-home', {
+                    usuario: resultadoUsuario[0],
+                    totalAlunos: 0,
+                    erro: 'Erro ao carregar total de alunos.'
+                });
+            }
+
+            res.render('instrutor-home', {
+                usuario: resultadoUsuario[0],
+                totalAlunos: resultadoAlunos[0].totalAlunos,
+                erro: null
+            });
         });
     });
 });
@@ -74,7 +92,6 @@ router.get('/aluno/desvincular/:id_aluno', instrutorAuth,function(req,res) {
     });
 })
 
-
 router.get('/conta', instrutorAuth, function (req, res) {
     const id_login = req.session.usuario.id;
 
@@ -85,17 +102,35 @@ router.get('/conta', instrutorAuth, function (req, res) {
         WHERE c.id_login = ?;
     `;
 
+    const sql_alunos = `
+        SELECT COUNT(*) AS totalAlunos
+        FROM aluno
+        WHERE id_instrutor = ?;
+    `;
+
     db.query(sql, [id_login], (erro, resultado) => {
-        if (erro) {
+        if (erro || resultado.length === 0) {
             return res.render('instrutor-account', {
                 usuario: null,
+                totalAlunos: 0,
                 erro: 'Erro ao carregar dados da conta.'
             });
         }
 
-        res.render('instrutor-account', {
-            usuario: resultado[0],
-            erro: null
+        db.query(sql_alunos, [id_login], (erro2, resultadoAlunos) => {
+            if (erro2) {
+                return res.render('instrutor-account', {
+                    usuario: resultado[0],
+                    totalAlunos: 0,
+                    erro: 'Erro ao carregar total de alunos.'
+                });
+            }
+
+            res.render('instrutor-account', {
+                usuario: resultado[0],
+                totalAlunos: resultadoAlunos[0].totalAlunos,
+                erro: null
+            });
         });
     });
 });
@@ -577,6 +612,58 @@ router.get('/treino/exercicio/:id/down', instrutorAuth, function (req, res) {
                     res.redirect('/instrutor/treino/' + idTreino + '/exercicios');
                 }
             );
+        });
+    });
+});
+
+router.post('/conta/senha', instrutorAuth, function (req, res) {
+
+    const id_login = req.session.usuario.id;
+    const { senha_atual, nova_senha, confirmar_senha } = req.body;
+
+    if (!senha_atual || !nova_senha || !confirmar_senha) {
+        req.session.erroConta = 'Preencha todos os campos.';
+        return res.redirect('/instrutor/conta');
+    }
+
+    if (nova_senha !== confirmar_senha) {
+        req.session.erroConta = 'As novas senhas não conferem.';
+        return res.redirect('/instrutor/conta');
+    }
+
+    const sqlBusca = `
+        SELECT senha_hash
+        FROM conta_login
+        WHERE id_login = ?;
+    `;
+
+    db.query(sqlBusca, [id_login], (err, result) => {
+        if (err || result.length === 0) {
+            req.session.erroConta = 'Erro ao verificar senha atual.';
+            return res.redirect('/instrutor/conta');
+        }
+
+        const senhaBanco = result[0].senha_hash;
+
+        if (senha_atual !== senhaBanco) {
+            req.session.erroConta = 'Senha atual incorreta.';
+            return res.redirect('/instrutor/conta');
+        }
+
+        const sqlUpdate = `
+            UPDATE conta_login
+            SET senha_hash = ?
+            WHERE id_login = ?;
+        `;
+
+        db.query(sqlUpdate, [nova_senha, id_login], (err) => {
+            if (err) {
+                req.session.erroConta = 'Erro ao atualizar senha.';
+                return res.redirect('/instrutor/conta');
+            }
+
+            req.session.sucessoConta = 'Senha alterada com sucesso!';
+            res.redirect('/instrutor/conta');
         });
     });
 });

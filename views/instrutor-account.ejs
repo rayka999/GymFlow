@@ -35,46 +35,6 @@
     <div class="card mb-4">
         <div class="card-body">
             <h5 class="card-title d-flex justify-content-between align-items-center">
-                Editar Dados
-                <button class="btn btn-outline-primary btn-sm" type="button"
-                        onclick="toggleForm('form-editar-dados')">
-                    <i class="bi bi-pencil"></i> Editar
-                </button>
-            </h5>
-
-            <form id="form-editar-dados"
-                  action="/instrutor/conta/editar"
-                  method="POST"
-                  class="d-none mt-3">
-
-                <div class="mb-3">
-                    <label class="form-label">Nome</label>
-                    <input type="text" name="nome" class="form-control"
-                           value="<%= usuario.nome %>" required>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Nome de usuário</label>
-                    <input type="text" name="username" class="form-control"
-                           value="<%= usuario.user_name %>" required>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">E-mail</label>
-                    <input type="email" name="email" class="form-control"
-                           value="<%= usuario.email %>" required>
-                </div>
-
-                <button type="submit" class="btn btn-primary w-100">
-                    Salvar alterações
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="card-title d-flex justify-content-between align-items-center">
                 Segurança
                 <button class="btn btn-outline-warning btn-sm" type="button"
                         onclick="toggleForm('form-alterar-senha')">
@@ -82,24 +42,38 @@
                 </button>
             </h5>
 
-            <form id="form-alterar-senha"
-                  action="/instrutor/conta/senha"
-                  method="POST"
-                  class="d-none mt-3">
-
+            <form id="form-alterar-senha" action="/instrutor/conta/senha" method="POST" class="d-none mt-3">
                 <div class="mb-3">
-                    <label class="form-label">Nova senha</label>
-                    <input type="password" name="senha" class="form-control" required>
+                    <label for="senha_atual" class="form-label">Senha atual</label>
+                    <input 
+                        type="password" 
+                        class="form-control" 
+                        id="senha_atual" 
+                        name="senha_atual" 
+                        required
+                    >
                 </div>
-
                 <div class="mb-3">
-                    <label class="form-label">Confirmar senha</label>
-                    <input type="password" name="confirmar_senha" class="form-control" required>
+                    <label for="nova_senha" class="form-label">Nova senha</label>
+                    <input 
+                        type="password" 
+                        class="form-control" 
+                        id="nova_senha" 
+                        name="nova_senha" 
+                        required
+                    >
                 </div>
-
-                <button type="submit" class="btn btn-warning w-100">
-                    Alterar senha
-                </button>
+                <div class="mb-3">
+                    <label for="confirmar_senha" class="form-label">Confirmar nova senha</label>
+                    <input 
+                        type="password" 
+                        class="form-control" 
+                        id="confirmar_senha" 
+                        name="confirmar_senha" 
+                        required
+                    >
+                </div>                
+                <button type="submit" class="btn btn-warning w-100">Alterar senha</button>
             </form>
         </div>
     </div>
@@ -107,7 +81,7 @@
     <div class="card mb-4">
         <div class="card-body">
             <h5 class="card-title">Informações do Instrutor</h5>
-            <p><strong>Total de alunos vinculados:</strong></p>
+            <p><strong>Total de alunos vinculados: <%= totalAlunos %></strong></p>
         </div>
     </div>
 
