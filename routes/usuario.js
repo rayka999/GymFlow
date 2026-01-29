@@ -3,13 +3,13 @@ var router = express.Router();
 var db = require('../utils/db');
 const alunoAuth = require('../middlewares/aluno_auth');
 
-// Função auxiliar para converter dia da semana em português MAIÚSCULO
+
+//início
 function getDiaSemanaAtual() {
     const dias = ['DOMINGO', 'SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO'];
     return dias[new Date().getDay()];
 }
 
-// Rota principal do dashboard
 router.get('/inicio', alunoAuth, function (req, res) {
     const id_aluno = req.session.usuario.id;
     const diaAtual = getDiaSemanaAtual();
@@ -18,7 +18,6 @@ router.get('/inicio', alunoAuth, function (req, res) {
     console.log("ID aluno:", id_aluno);
     console.log("Dia atual:", diaAtual);
 
-    // 1. Dados do usuário
     const sqlUsuario = `
         SELECT c.*, p.nome
         FROM conta_login c
@@ -38,8 +37,6 @@ router.get('/inicio', alunoAuth, function (req, res) {
 
         const usuario = resultadoUsuario && resultadoUsuario.length > 0 ? resultadoUsuario[0] : { nome: 'Aluno' };
         
-        // 2. Busca PRÓXIMO TREINO
-        // Primeiro, busca todos os treinos do aluno
         const sqlTodosTreinos = `
             SELECT t.id_treino, t.nome, tp.dia_semana
             FROM treino t
@@ -59,7 +56,6 @@ router.get('/inicio', alunoAuth, function (req, res) {
                 const diasSemana = ['SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO', 'DOMINGO'];
                 const indexAtual = diasSemana.indexOf(diaAtual);
                 
-                // Procura o próximo treino (começando do dia seguinte)
                 for (let offset = 1; offset <= 7; offset++) {
                     const proximoIndex = (indexAtual + offset) % 7;
                     const diaProcurado = diasSemana[proximoIndex];
@@ -72,7 +68,6 @@ router.get('/inicio', alunoAuth, function (req, res) {
                     }
                 }
                 
-                // Se não encontrou, usa o primeiro da lista
                 if (!proximoTreino) {
                     proximoTreino = todosTreinos[0];
                     console.log("Usando primeiro treino:", proximoTreino);
@@ -81,7 +76,6 @@ router.get('/inicio', alunoAuth, function (req, res) {
                 console.log("Nenhum treino encontrado para o aluno");
             }
             
-            // 3. Busca TREINOS NA SEMANA
             const sqlTreinosSemana = `
                 SELECT COUNT(*) as total
                 FROM treino_realizado tr
@@ -99,8 +93,6 @@ router.get('/inicio', alunoAuth, function (req, res) {
                 console.log("Usuário:", usuario.nome);
                 console.log("Próximo treino:", proximoTreino);
                 console.log("Treinos semana:", treinosSemana);
-                
-                // RENDERIZAÇÃO FINAL - garantindo que todas as variáveis existam
                 res.render('aluno-home', {
                     usuario: usuario || { nome: 'Aluno' },
                     proximoTreino: proximoTreino || null,
@@ -110,6 +102,8 @@ router.get('/inicio', alunoAuth, function (req, res) {
         });
     });
 });
+
+//opcoes
 
 router.get('/opcoes',alunoAuth, function (req,res){
     res.render('aluno-options', {
@@ -123,9 +117,10 @@ router.get('/estatisticas',alunoAuth,function (req,res){
     });
 });
 
-router.get('/conta', alunoAuth, function(req, res) {
+router.get('/conta', alunoAuth, function (req, res) {
 
     const id_login = req.session.usuario.id;
+    const id_aluno = req.session.usuario.id;
 
     const sqlConta = `
         SELECT c.*, p.nome
@@ -137,7 +132,21 @@ router.get('/conta', alunoAuth, function(req, res) {
     const sqlInstrutores = `
         SELECT i.id_instrutor, p.nome
         FROM instrutor i
-        INNER JOIN pessoa p ON p.id_pessoa = i.id_instrutor
+        INNER JOIN pessoa p ON p.id_pessoa = i.id_instrutor;
+    `;
+
+    const sqlTotalTreinos = `
+        SELECT COUNT(*) AS total
+        FROM treino_realizado
+        WHERE id_aluno = ?;
+    `;
+
+    const sqlUltimoTreino = `
+        SELECT data_treino
+        FROM treino_realizado
+        WHERE id_aluno = ?
+        ORDER BY data_treino DESC
+        LIMIT 1;
     `;
 
     db.query(sqlConta, [id_login], (erroConta, resultadoConta) => {
@@ -145,6 +154,8 @@ router.get('/conta', alunoAuth, function(req, res) {
             return res.render('aluno-account', {
                 usuario: null,
                 instrutores: [],
+                totalTreinos: 0,
+                ultimoTreino: null,
                 erro: 'Erro ao carregar dados da conta.'
             });
         }
@@ -154,14 +165,44 @@ router.get('/conta', alunoAuth, function(req, res) {
                 return res.render('aluno-account', {
                     usuario: resultadoConta[0],
                     instrutores: [],
+                    totalTreinos: 0,
+                    ultimoTreino: null,
                     erro: 'Erro ao carregar instrutores.'
                 });
             }
 
-            res.render('aluno-account', {
-                usuario: resultadoConta[0],
-                instrutores: instrutores,
-                erro: null
+            db.query(sqlTotalTreinos, [id_aluno], (erroTotal, totalResult) => {
+                if (erroTotal) {
+                    return res.render('aluno-account', {
+                        usuario: resultadoConta[0],
+                        instrutores,
+                        totalTreinos: 0,
+                        ultimoTreino: null,
+                        erro: 'Erro ao carregar total de treinos.'
+                    });
+                }
+
+                db.query(sqlUltimoTreino, [id_aluno], (erroUltimo, ultimoResult) => {
+                    if (erroUltimo) {
+                        return res.render('aluno-account', {
+                            usuario: resultadoConta[0],
+                            instrutores,
+                            totalTreinos: totalResult[0].total,
+                            ultimoTreino: null,
+                            erro: 'Erro ao carregar último treino.'
+                        });
+                    }
+
+                    res.render('aluno-account', {
+                        usuario: resultadoConta[0],
+                        instrutores,
+                        totalTreinos: totalResult[0].total,
+                        ultimoTreino: ultimoResult.length
+                            ? ultimoResult[0].data_treino
+                            : null,
+                        erro: null
+                    });
+                });
             });
         });
     });
@@ -842,5 +883,23 @@ router.post('/conta/senha', alunoAuth, function (req, res) {
     });
 });
 
+router.post('/treino/:id_treino/concluir', alunoAuth, function (req, res){
+    let id_aluno= req.session.usuario.id;
+    let id_treino=req.params.id_treino;
+
+    let sql=
+    `INSERT INTO treino_realizado (data_treino,id_aluno,id_treino,inicio,fim,duracao)
+    VALUES (CURRENT_DATE,?,?,null,null,null);`
+    db.query(sql,[id_aluno,id_treino],
+        function (err) {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Erro ao marcar treino como concluído');
+            }
+
+            res.redirect('/usuario/meus-treinos');
+        }
+    )
+})
 
 module.exports = router;
