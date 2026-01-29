@@ -11,16 +11,6 @@ Instrutor (ágata e gabi)
 - atribuir treinos (prioridade)
 4. conta (esperar marina)
 
-Aluno (rayka e mariana)
-conta
--post da senha
--post dados complementares
-inicio
-
-view dos treinos personalizados
-
 Geral
 -scroll de treinos públicos
--mudar infos das contas (marina)
-- adicionar multiplos exercicios com select 2 (algo assim n lembro teve na aula hj)
 -criptografia das senhas e email
