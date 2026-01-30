@@ -6,22 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
     <link rel="stylesheet" href="/stylesheets/aluno.css">
 </head>
+
 <body class="bg-light">
 
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
 
-    <h3 class="mb-4">Meus Treinos</h3>
+    <h3 class="mb-4 fw-bold">Meus Treinos</h3>
 
-    <div class="mb-5">
-        <h5 class="mb-3 text-danger">Treinos Públicos</h5>
+    <section class="mb-5">
+        <h5 class="mb-3 text-danger">
+            <i class="bi bi-globe"></i> Treinos Públicos
+        </h5>
 
         <% if (treinosPublicos.length === 0) { %>
-            <p class="text-muted">Você ainda não criou treinos públicos.</p>
+            <p class="text-muted">Nenhum treino público disponível.</p>
         <% } else { %>
             <div class="row g-3">
                 <% treinosPublicos.forEach(treino => { %>
@@ -30,87 +31,123 @@
                             <div class="card-body">
                                 <h6 class="card-title"><%= treino.nome %></h6>
                                 <p class="card-text text-muted small">
-                                    <%= treino.descricao %>
+                                    <%= treino.descricao || 'Sem descrição.' %>
                                 </p>
                             </div>
 
                             <div class="card-footer bg-white border-0 d-flex gap-2">
                                 <a href="/usuario/treino/<%= treino.id_treino %>/exercicios"
-                                   class="btn btn-gymflow flex-fill">
-                                    Abrir Treino
+                                   class="btn btn-dark flex-fill">
+                                    Abrir
                                 </a>
-                            
-                                <form action="/usuario/treino/<%= treino.id_treino %>/excluir" method="POST"
-                                      onsubmit="return confirm('Tem certeza que deseja excluir este treino?')">
-                                    <button type="submit" class="btn btn-outline-danger">
+
+                                <form action="/usuario/treino/<%= treino.id_treino %>/excluir"
+                                      method="POST"
+                                      onsubmit="return confirm('Deseja excluir este treino?')">
+                                    <button class="btn btn-outline-danger">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
                             </div>
-                            
                         </div>
                     </div>
                 <% }) %>
             </div>
         <% } %>
-    </div>
+    </section>
 
-    <div>
-        <h5 class="mb-3 text-secondary">Treinos Personalizados</h5>
+    <section class="mb-5">
+        <h5 class="mb-3 text-secondary">
+            <i class="bi bi-person"></i> Meus Treinos
+        </h5>
 
-        <% if (treinosPrivados.length === 0) { %>
+        <% if (treinosAluno.length === 0) { %>
             <p class="text-muted">Você ainda não criou treinos personalizados.</p>
         <% } else { %>
             <div class="row g-3">
-                <% treinosPrivados.forEach(treino => { %>
+                <% treinosAluno.forEach(treino => { %>
                     <div class="col-md-4">
                         <div class="card h-100 shadow-sm border-secondary">
                             <div class="card-body">
                                 <h6 class="card-title"><%= treino.nome %></h6>
-                            
-                                <p class="text-primary small mb-1">
+
+                                <p class="small text-primary mb-1">
                                     <i class="bi bi-calendar-week"></i>
                                     <strong><%= treino.dia_semana %></strong>
                                 </p>
-                            
+
                                 <p class="card-text text-muted small">
-                                    <%= treino.descricao %>
+                                    <%= treino.descricao || 'Sem descrição.' %>
                                 </p>
                             </div>
-                            
 
-                            <div class="card-footer bg-white border-0 d-flex flex-column gap-2">
-
+                            <div class="card-footer bg-white border-0 d-grid gap-2">
                                 <a href="/usuario/treino/<%= treino.id_treino %>/exercicios"
-                                   class="btn btn-outline-secondary w-100">
-                                    Abrir Treino
+                                   class="btn btn-outline-secondary">
+                                    Abrir
                                 </a>
-                            
+
                                 <form action="/usuario/treino/<%= treino.id_treino %>/concluir" method="POST">
-                                    <button type="submit" class="btn btn-success w-100">
+                                    <button class="btn btn-success">
                                         <i class="bi bi-check-circle"></i>
-                                        Marcar como concluído
+                                        Concluir
                                     </button>
                                 </form>
-                            
-                                <form action="/usuario/treino/<%= treino.id_treino %>/excluir" method="POST"
-                                      onsubmit="return confirm('Tem certeza que deseja excluir este treino?')">
-                                    <button type="submit" class="btn btn-outline-danger w-100">
+
+                                <form action="/usuario/treino/<%= treino.id_treino %>/excluir"
+                                      method="POST"
+                                      onsubmit="return confirm('Deseja excluir este treino?')">
+                                    <button class="btn btn-outline-danger">
                                         <i class="bi bi-trash"></i>
                                         Excluir
                                     </button>
                                 </form>
-                            
                             </div>
-                            
                         </div>
                     </div>
                 <% }) %>
             </div>
         <% } %>
-    </div>
-</div>
+    </section>
+    <section>
+        <h5 class="mb-3 text-danger">
+            <i class="bi bi-award"></i> Treinos do Instrutor
+        </h5>
 
+        <% if (treinosInstrutor.length === 0) { %>
+            <p class="text-muted">Nenhum treino atribuído pelo instrutor.</p>
+        <% } else { %>
+            <div class="row g-3">
+                <% treinosInstrutor.forEach(treino => { %>
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm border-danger">
+                            <div class="card-body">
+                                <h6 class="card-title"><%= treino.nome %></h6>
+
+                                <p class="small text-danger mb-1">
+                                    <i class="bi bi-calendar-check"></i>
+                                    <strong><%= treino.dia_semana %></strong>
+                                </p>
+
+                                <p class="card-text text-muted small">
+                                    <%= treino.descricao || 'Sem descrição.' %>
+                                </p>
+                            </div>
+
+                            <div class="card-footer bg-white border-0 d-grid gap-2">
+                                <a href="/usuario/treino/<%= treino.id_treino %>/exercicios"
+                                   class="btn btn-danger">
+                                    Abrir
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+    </section>
+
+</div>
 <nav class="bottom-nav py-2">
     <div class="container">
         <div class="row text-center">

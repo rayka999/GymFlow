@@ -106,16 +106,40 @@ router.get('/inicio', alunoAuth, function (req, res) {
 //opcoes
 
 router.get('/opcoes',alunoAuth, function (req,res){
+
     res.render('aluno-options', {
         usuario: req.session.usuario
     });
 });
 
-router.get('/estatisticas',alunoAuth,function (req,res){
-    res.render('aluno-est', {
-        usuario: req.session.usuario
+router.get('/estatisticas', alunoAuth, function (req, res) {
+    const id_aluno = req.session.usuario.id;
+
+    const sqlTotalTreinos = `
+        SELECT COUNT(*) AS total
+        FROM treino_realizado
+        WHERE id_aluno = ?;
+    `;
+
+    db.query(sqlTotalTreinos, [id_aluno], (erroTotal, totalResult) => {
+        if (erroTotal) {
+            return res.render('aluno-est', {
+                usuario: req.session.usuario,
+                totalTreinos: 0,
+                erro: 'Erro ao carregar total de treinos.'
+            });
+        }
+
+        const totalTreinos = totalResult[0]?.total || 0;
+
+        return res.render('aluno-est', {
+            usuario: req.session.usuario,
+            totalTreinos,
+            erro: null
+        });
     });
 });
+
 
 router.get('/conta', alunoAuth, function (req, res) {
 
@@ -408,7 +432,8 @@ router.post('/opcoes/treino/personalizado', alunoAuth, function (req, res) {
     const {
         nome,
         descricao,
-        dia_semana
+        dia_semana,
+        observacoes
     } = req.body;
 
     const sql_treino = `
@@ -428,12 +453,12 @@ router.post('/opcoes/treino/personalizado', alunoAuth, function (req, res) {
         const sql_personalizado = `
             INSERT INTO treino_personalizado
             ( id_treino, id_aluno, dia_semana,observacoes)
-            VALUES (?, ?, ?, NULL )
+            VALUES (?, ?, ?, ? )
         `;
 
         db.query(
             sql_personalizado,
-            [ id_treino, id_criador, dia_semana],
+            [ id_treino, id_criador, dia_semana,observacoes],
             function (err) {
                 if (err) {
                     console.error(err);
@@ -446,18 +471,19 @@ router.post('/opcoes/treino/personalizado', alunoAuth, function (req, res) {
     });
 });
 
-router.get('/meus-treinos', alunoAuth, (req, res) => {
+router.get('/meus-treinos', alunoAuth, function (req, res) {
 
     const idAluno = req.session.usuario.id;
 
     const sqlPublicos = `
-        SELECT * FROM treino
-        WHERE id_criador = ?
-          AND criador_tipo = 1
-          AND publico = 1
+        SELECT 
+            t.*
+        FROM treino t
+        WHERE t.criador_tipo = 1
+          AND t.publico = 1
     `;
 
-    const sqlPrivados = `
+    const sqlPrivadosAluno = `
         SELECT 
             t.*,
             p.dia_semana
@@ -470,21 +496,41 @@ router.get('/meus-treinos', alunoAuth, (req, res) => {
           AND p.id_aluno = ?
     `;
 
-    db.query(sqlPublicos, [idAluno], (err, treinosPublicos) => {
+    const sqlPrivadosInstrutor = `
+        SELECT 
+            t.*,
+            p.dia_semana
+        FROM treino t
+        INNER JOIN treino_personalizado p
+            ON p.id_treino = t.id_treino
+        WHERE t.criador_tipo = 2
+          AND t.publico = 0
+          AND p.id_aluno = ?
+    `;
+
+    db.query(sqlPublicos, function (err, treinosPublicos) {
         if (err) {
             console.error(err);
             return res.status(500).send('Erro ao buscar treinos públicos');
         }
 
-        db.query(sqlPrivados, [idAluno, idAluno], (err, treinosPrivados) => {
+        db.query(sqlPrivadosAluno, [idAluno, idAluno], function (err, treinosAluno) {
             if (err) {
                 console.error(err);
-                return res.status(500).send('Erro ao buscar treinos personalizados');
+                return res.status(500).send('Erro ao buscar treinos do aluno');
             }
 
-            res.render('aluno-treinos', {
-                treinosPublicos,
-                treinosPrivados
+            db.query(sqlPrivadosInstrutor, [idAluno], function (err, treinosInstrutor) {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Erro ao buscar treinos do instrutor');
+                }
+
+                res.render('aluno-treinos', {
+                    treinosPublicos,
+                    treinosAluno,
+                    treinosInstrutor
+                });
             });
         });
     });

@@ -92,6 +92,336 @@ router.get('/aluno/desvincular/:id_aluno', instrutorAuth,function(req,res) {
     });
 })
 
+router.get('/treino/criar/:id_aluno', instrutorAuth, function (req, res) {
+
+    const id_aluno = req.params.id_aluno;
+
+    const sql_info_aluno = `
+        SELECT a.*,
+            c.email
+        FROM aluno AS a
+        INNER JOIN conta_login AS c
+            ON a.id_aluno = c.id_login
+        WHERE a.id_aluno = ?
+    `;
+
+    db.query(sql_info_aluno, [id_aluno], function (err, result) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Erro ao buscar informações do aluno');
+        }
+
+        if (result.length === 0) {
+            return res.status(404).send('Aluno não encontrado');
+        }
+
+        res.render('treino-criar', {
+            aluno: result[0]
+        });
+    });
+});
+
+router.post('/treino/criar/:id_aluno',instrutorAuth, function (req,res){
+    const id_criador = req.session.usuario.id;
+    let id_aluno=req.params.id_aluno;
+
+    const {
+        nome,
+        descricao,
+        dia_semana,
+        observacoes
+    } = req.body;
+
+    const sql_treino = `
+        INSERT INTO treino 
+        (id_criador, criador_tipo, criado_em, descricao, nome, publico)
+        VALUES (?, 2, CURRENT_TIMESTAMP, ?, ?, 0)
+    `;
+
+    db.query(sql_treino, [id_criador, descricao, nome], function (err, result) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Erro ao criar treino');
+        }
+
+        const id_treino = result.insertId;
+
+        const sql_personalizado = `
+            INSERT INTO treino_personalizado
+            ( id_treino, id_aluno, dia_semana,observacoes)
+            VALUES (?, ?, ?, ? )
+        `;
+
+        db.query(
+            sql_personalizado,
+            [ id_treino, id_aluno, dia_semana,observacoes],
+            function (err) {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Erro ao vincular treino');
+                }
+
+                res.redirect(`/instrutor/treino/criar/exercicios/${id_treino}`);
+            }
+        );
+    });
+});
+
+router.get('/treino/criar/exercicios/:id_treino', instrutorAuth, function (req, res) {
+
+    const idTreino = req.params.id_treino;
+
+    const sqlTreino = 'SELECT * FROM treino WHERE id_treino = ?';
+    const sqlExerciciosTreino = `
+        SELECT te.id_treino_exercicio, e.nome,
+               te.ordem, te.repeticoes_sugerida,
+               te.serie_sugerida, te.descanso_sugerido
+        FROM treino_exercicio te
+        JOIN exercicio e ON e.id_exercicio = te.id_exercicio
+        WHERE te.id_treino = ?
+        ORDER BY te.ordem
+    `;
+    const sqlExercicios = 'SELECT * FROM exercicio';
+
+    db.query(sqlTreino, [idTreino], function (err, treinoResult) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Erro ao buscar treino');
+        }
+
+        db.query(sqlExerciciosTreino, [idTreino], function (err, exerciciosTreino) {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Erro ao buscar exercícios do treino');
+            }
+
+            db.query(sqlExercicios, function (err, exercicios) {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Erro ao buscar exercícios');
+                }
+
+                res.render('i-tp-exercicios', {
+                    treino: treinoResult[0],
+                    exerciciosTreino,
+                    exercicios
+                });
+            });
+        });
+    });
+});
+
+
+router.post('/treino/exercicio/add', instrutorAuth, function (req, res) {
+
+    const { id_treino, id_exercicio } = req.body;
+
+    const sqlMaxOrdem = `
+        SELECT MAX(ordem) AS maxOrdem
+        FROM treino_exercicio
+        WHERE id_treino = ?
+    `;
+
+    db.query(sqlMaxOrdem, [id_treino], function (err, result) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Erro ao calcular ordem');
+        }
+
+        const novaOrdem = (result[0].maxOrdem || 0) + 1;
+
+        const sqlInsert = `
+            INSERT INTO treino_exercicio
+            (id_treino, id_exercicio, ordem,
+             repeticoes_sugerida, serie_sugerida, descanso_sugerido)
+            VALUES (
+                ?, ?, ?,
+                (SELECT repeticoes_padrao FROM exercicio WHERE id_exercicio = ?),
+                (SELECT serie_padrao FROM exercicio WHERE id_exercicio = ?),
+                (SELECT descanso_padrao FROM exercicio WHERE id_exercicio = ?)
+            )
+        `;
+
+        db.query(
+            sqlInsert,
+            [
+                id_treino,
+                id_exercicio,
+                novaOrdem,
+                id_exercicio,
+                id_exercicio,
+                id_exercicio
+            ],
+            function (err) {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Erro ao adicionar exercício');
+                }
+
+                res.redirect(`/instrutor/treino/criar/exercicios/${id_treino}`);
+            }
+        );
+    });
+});
+
+router.post('/treino/exercicio/:id/delete', instrutorAuth, function (req, res) {
+
+    const idTreinoExercicio = req.params.id;
+
+    const sqlBuscar = `
+        SELECT id_treino, ordem
+        FROM treino_exercicio
+        WHERE id_treino_exercicio = ?
+    `;
+
+    db.query(sqlBuscar, [idTreinoExercicio], function (err, result) {
+        if (err || result.length === 0) {
+            console.error(err);
+            return res.status(500).send('Exercício não encontrado');
+        }
+
+        const idTreino = result[0].id_treino;
+        const ordemRemovida = result[0].ordem;
+
+        db.query(
+            'DELETE FROM treino_exercicio WHERE id_treino_exercicio = ?',
+            [idTreinoExercicio],
+            function (err) {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Erro ao remover exercício');
+                }
+                db.query(`
+                    UPDATE treino_exercicio
+                    SET ordem = ordem - 1
+                    WHERE id_treino = ?
+                      AND ordem > ?
+                `, [idTreino, ordemRemovida], function (err) {
+                    if (err) {
+                        console.error(err);
+                        return res.status(500).send('Erro ao reajustar ordem');
+                    }
+
+                    res.redirect(`/instrutor/treino/criar/exercicios/${idTreino}`);
+                });
+            }
+        );
+    });
+});
+
+router.get('/treino/exercicio/:id/up', instrutorAuth, function (req, res) {
+
+    const idTreinoExercicio = req.params.id;
+
+    const sqlAtual = `
+        SELECT id_treino, ordem
+        FROM treino_exercicio
+        WHERE id_treino_exercicio = ?
+    `;
+
+    db.query(sqlAtual, [idTreinoExercicio], function (err, atual) {
+        if (err || atual.length === 0) {
+            console.error(err);
+            return res.status(500).send('Exercício não encontrado');
+        }
+
+        const idTreino = atual[0].id_treino;
+        const ordemAtual = atual[0].ordem;
+
+        if (ordemAtual === 1) {
+            res.redirect(`/instrutor/treino/criar/exercicios/${idTreino}}`);
+        }
+
+        const sqlTrocar = `
+            UPDATE treino_exercicio
+            SET ordem = CASE
+                WHEN ordem = ? THEN ?
+                WHEN ordem = ? THEN ?
+            END
+            WHERE id_treino = ?
+              AND ordem IN (?, ?)
+        `;
+
+        db.query(
+            sqlTrocar,
+            [ordemAtual, ordemAtual - 1,
+             ordemAtual - 1, ordemAtual,
+             idTreino,
+             ordemAtual, ordemAtual - 1],
+            function (err) {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Erro ao mover exercício');
+                }
+
+                res.redirect(`/instrutor/treino/criar/exercicios/${idTreino}}`);
+            }
+        );
+    });
+});
+
+router.get('/treino/exercicio/:id/down', instrutorAuth, function (req, res) {
+
+    const idTreinoExercicio = req.params.id;
+
+    const sqlAtual = `
+        SELECT id_treino, ordem
+        FROM treino_exercicio
+        WHERE id_treino_exercicio = ?
+    `;
+
+    db.query(sqlAtual, [idTreinoExercicio], function (err, atual) {
+        if (err || atual.length === 0) {
+            console.error(err);
+            return res.status(500).send('Exercício não encontrado');
+        }
+
+        const idTreino = atual[0].id_treino;
+        const ordemAtual = atual[0].ordem;
+
+        db.query(`
+            SELECT MAX(ordem) AS maxOrdem
+            FROM treino_exercicio
+            WHERE id_treino = ?
+        `, [idTreino], function (err, max) {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Erro ao buscar ordem máxima');
+            }
+
+            if (ordemAtual === max[0].maxOrdem) {
+                res.redirect(`/instrutor/treino/criar/exercicios/${idTreino}}`);
+            }
+
+            const sqlTrocar = `
+                UPDATE treino_exercicio
+                SET ordem = CASE
+                    WHEN ordem = ? THEN ?
+                    WHEN ordem = ? THEN ?
+                END
+                WHERE id_treino = ?
+                  AND ordem IN (?, ?)
+            `;
+
+            db.query(
+                sqlTrocar,
+                [ordemAtual, ordemAtual + 1,
+                 ordemAtual + 1, ordemAtual,
+                 idTreino,
+                 ordemAtual, ordemAtual + 1],
+                function (err) {
+                    if (err) {
+                        console.error(err);
+                        return res.status(500).send('Erro ao mover exercício');
+                    }
+
+                    res.redirect(`/instrutor/treino/criar/exercicios/${idTreino}}`);
+                }
+            );
+        });
+    });
+});
+
 router.get('/conta', instrutorAuth, function (req, res) {
     const id_login = req.session.usuario.id;
 
