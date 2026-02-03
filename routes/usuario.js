@@ -498,14 +498,18 @@ router.get('/meus-treinos', alunoAuth, function (req, res) {
 
     const sqlPrivadosInstrutor = `
         SELECT 
-            t.*,
-            p.dia_semana
+            t.*, 
+            p.dia_semana,
+            p.observacoes
         FROM treino t
         INNER JOIN treino_personalizado p
             ON p.id_treino = t.id_treino
+        INNER JOIN aluno a
+            ON a.id_aluno = p.id_aluno
         WHERE t.criador_tipo = 2
-          AND t.publico = 0
           AND p.id_aluno = ?
+          AND t.id_criador = a.id_instrutor
+        ORDER BY FIELD(p.dia_semana, 'SEGUNDA','TERCA','QUARTA','QUINTA','SEXTA','SABADO','DOMINGO');
     `;
 
     db.query(sqlPublicos, function (err, treinosPublicos) {

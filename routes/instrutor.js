@@ -77,6 +77,69 @@ router.get('/alunos', instrutorAuth, (req, res) => {
     });
 });
 
+router.get('/treino/atribuir', instrutorAuth, function (req, res) {
+    const id_instrutor = req.session.usuario.id;
+
+    const sqlAlunos = `
+    SELECT a.*, p.nome
+    FROM aluno AS a
+    INNER JOIN conta_login AS c
+        ON a.id_aluno = c.id_login
+    INNER JOIN pessoa AS p
+        ON c.id_pessoa = p.id_pessoa
+    WHERE a.id_instrutor = ?;
+    `;
+
+    const sqlTreinos = `
+    SELECT * FROM treino
+    WHERE id_criador = ?
+      AND criador_tipo = 2
+    `;
+
+    db.query(sqlAlunos, [id_instrutor], (erro, alunos) => {
+        if (erro) {
+            console.error(erro);
+            return res.status(500).send('Erro ao buscar alunos');
+        }
+
+        db.query(sqlTreinos, [id_instrutor], (erro2, treinos) => {
+            if (erro2) {
+                console.error(erro2);
+                return res.status(500).send('Erro ao buscar treinos');
+            }
+
+            res.render('instrutor-alunos-atribuir', {
+                usuario: req.session.usuario,
+                alunos,
+                treinos
+            });
+        });
+    });
+});
+
+router.post('/treino/atribuir', instrutorAuth, function (req, res) {
+    let { alunoIds, id_treino, dia_semana, observacoes } = req.body;
+
+    if (!alunoIds) {
+        return res.redirect('/instrutor/treino/atribuir');
+    }
+
+    if (!Array.isArray(alunoIds)) alunoIds = [alunoIds];
+
+    const values = alunoIds.map(id_aluno => [id_treino, id_aluno, dia_semana, observacoes || null]);
+
+    const sqlInsert = `INSERT INTO treino_personalizado (id_treino, id_aluno, dia_semana, observacoes) VALUES ?`;
+
+    db.query(sqlInsert, [values], function (err) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Erro ao atribuir treino');
+        }
+
+        res.redirect('/instrutor/alunos');
+    });
+});
+
 router.get('/aluno/desvincular/:id_aluno', instrutorAuth,function(req,res) {
     let id_aluno=req.params.id_aluno
     let sql=`
