@@ -18,7 +18,6 @@
         Olá, <strong><%= usuario ? usuario.nome.split(' ')[0] : 'Aluno' %></strong>
     </h4>
 
-    <!-- Card: Próximo treino -->
     <div class="card mb-4">
         <div class="card-body text-center">
             <i class="bi bi-calendar-plus fs-1 text-primary mb-3"></i>
@@ -37,17 +36,16 @@
                     <i class="bi bi-play-circle"></i> Começar treino
                 </a>
             <% } else { %>
-                <p class="fs-4 text-muted mb-3">Nenhum treino agendado</p>
+                <p class="fs-4 text-muted mb-3">Nenhum treino agendado para essa semana</p>
                 <a href="/usuario/opcoes/treino/personalizado" 
                    class="btn btn-outline-primary">
-                    <i class="bi bi-plus-circle"></i> Criar primeiro treino
+                    <i class="bi bi-plus-circle"></i> Criar treino
                 </a>
             <% } %>
         </div>
     </div>
 
     <div class="row mb-4">
-        <!-- Card: Treinos na semana -->
         <div class="col-12">
             <div class="card text-center">
                 <div class="card-body">
@@ -60,7 +58,6 @@
         </div>
     </div>
 
-    <!-- Card: Atalhos rápidos -->
     <div class="card mb-4">
         <div class="card-body">
             <h5 class="card-title">Atalhos rápidos</h5>

@@ -3,12 +3,21 @@ var router = express.Router();
 var db = require('../utils/db');
 const alunoAuth = require('../middlewares/aluno_auth');
 
-
-//início
 function getDiaSemanaAtual() {
     const dias = ['DOMINGO', 'SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO'];
     return dias[new Date().getDay()];
 }
+
+function treinoDisponivel(ultimaExecucao) {
+    if (!ultimaExecucao) return true;
+
+    const hoje = new Date();
+    const ultima = new Date(ultimaExecucao);
+
+    const diffDias = (hoje - ultima) / (1000 * 60 * 60 * 24);
+    return diffDias >= 7;
+}
+
 
 router.get('/inicio', alunoAuth, function (req, res) {
     const id_aluno = req.session.usuario.id;
@@ -26,83 +35,92 @@ router.get('/inicio', alunoAuth, function (req, res) {
     `;
 
     db.query(sqlUsuario, [id_aluno], (erroUsuario, resultadoUsuario) => {
-        if (erroUsuario) {
-            console.error("Erro usuário:", erroUsuario);
-            return res.render('aluno-home', {
-                usuario: { nome: 'Aluno' },
-                proximoTreino: null,
-                treinosSemana: 0
-            });
-        }
+        const usuario = (!erroUsuario && resultadoUsuario?.length)
+            ? resultadoUsuario[0]
+            : { nome: 'Aluno' };
 
-        const usuario = resultadoUsuario && resultadoUsuario.length > 0 ? resultadoUsuario[0] : { nome: 'Aluno' };
-        
-        const sqlTodosTreinos = `
-            SELECT t.id_treino, t.nome, tp.dia_semana
+        const sqlTreinos = `
+            SELECT 
+                t.id_treino,
+                t.nome,
+                t.descricao,
+                t.criador_tipo,
+                tp.dia_semana,
+                MAX(tr.data_treino) AS ultima_execucao
             FROM treino t
-            INNER JOIN treino_personalizado tp ON t.id_treino = tp.id_treino
+            INNER JOIN treino_personalizado tp 
+                ON t.id_treino = tp.id_treino
+            LEFT JOIN treino_realizado tr
+                ON tr.id_treino = t.id_treino
+                AND tr.id_aluno = ?
             WHERE tp.id_aluno = ?
-            ORDER BY FIELD(tp.dia_semana, 
-                'SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO', 'DOMINGO'
-            );
+            GROUP BY 
+                t.id_treino,
+                t.nome,
+                t.descricao,
+                t.criador_tipo,
+                tp.dia_semana
         `;
 
-        db.query(sqlTodosTreinos, [id_aluno], (erroTreinos, todosTreinos) => {
+        db.query(sqlTreinos, [id_aluno, id_aluno], (erroTreinos, todosTreinos) => {
             let proximoTreino = null;
-            
-            if (!erroTreinos && todosTreinos && todosTreinos.length > 0) {
-                console.log("Todos os treinos encontrados:", todosTreinos);
-                
-                const diasSemana = ['SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO', 'DOMINGO'];
+
+            if (!erroTreinos && todosTreinos?.length) {
+
+                const diasSemana = ['DOMINGO','SEGUNDA','TERCA','QUARTA','QUINTA','SEXTA','SABADO'];
                 const indexAtual = diasSemana.indexOf(diaAtual);
-                
-                for (let offset = 1; offset <= 7; offset++) {
-                    const proximoIndex = (indexAtual + offset) % 7;
-                    const diaProcurado = diasSemana[proximoIndex];
-                    
-                    const treinoEncontrado = todosTreinos.find(t => t.dia_semana === diaProcurado);
-                    if (treinoEncontrado) {
-                        proximoTreino = treinoEncontrado;
-                        console.log("Próximo treino definido:", proximoTreino);
+
+                const ordemDias = diasSemana.slice(indexAtual);
+
+                console.log("Dias considerados nesta semana:", ordemDias);
+
+                for (const dia of ordemDias) {
+
+                    const instrutor = todosTreinos.find(t =>
+                        t.dia_semana === dia &&
+                        t.criador_tipo === 2 &&
+                        treinoDisponivel(t.ultima_execucao)
+                    );
+
+                    if (instrutor) {
+                        proximoTreino = instrutor;
+                        break;
+                    }
+
+                    const aluno = todosTreinos.find(t =>
+                        t.dia_semana === dia &&
+                        t.criador_tipo === 1 &&
+                        treinoDisponivel(t.ultima_execucao)
+                    );
+
+                    if (aluno) {
+                        proximoTreino = aluno;
                         break;
                     }
                 }
-                
-                if (!proximoTreino) {
-                    proximoTreino = todosTreinos[0];
-                    console.log("Usando primeiro treino:", proximoTreino);
-                }
-            } else {
-                console.log("Nenhum treino encontrado para o aluno");
             }
-            
+
             const sqlTreinosSemana = `
-                SELECT COUNT(*) as total
-                FROM treino_realizado tr
-                WHERE tr.id_aluno = ?
-                AND tr.data_treino >= DATE_SUB(CURDATE(), INTERVAL 7 DAY);
+                SELECT COUNT(*) AS total
+                FROM treino_realizado
+                WHERE id_aluno = ?
+                AND data_treino >= DATE_SUB(CURDATE(), INTERVAL 7 DAY);
             `;
-            
+
             db.query(sqlTreinosSemana, [id_aluno], (erroContagem, resultadoContagem) => {
-                let treinosSemana = 0;
-                if (!erroContagem && resultadoContagem && resultadoContagem.length > 0) {
-                    treinosSemana = resultadoContagem[0].total || 0;
-                }
-                
-                console.log("=== DADOS PARA RENDER ===");
-                console.log("Usuário:", usuario.nome);
-                console.log("Próximo treino:", proximoTreino);
-                console.log("Treinos semana:", treinosSemana);
+                const treinosSemana = (!erroContagem && resultadoContagem?.length)
+                    ? resultadoContagem[0].total
+                    : 0;
+
                 res.render('aluno-home', {
-                    usuario: usuario || { nome: 'Aluno' },
-                    proximoTreino: proximoTreino || null,
-                    treinosSemana: treinosSemana || 0
+                    usuario,
+                    proximoTreino,
+                    treinosSemana
                 });
             });
         });
     });
 });
-
 //opcoes
 
 router.get('/opcoes',alunoAuth, function (req,res){
@@ -113,6 +131,7 @@ router.get('/opcoes',alunoAuth, function (req,res){
 });
 
 router.get('/estatisticas', alunoAuth, function (req, res) {
+
     const id_aluno = req.session.usuario.id;
 
     const sqlTotalTreinos = `
@@ -121,25 +140,71 @@ router.get('/estatisticas', alunoAuth, function (req, res) {
         WHERE id_aluno = ?;
     `;
 
-    db.query(sqlTotalTreinos, [id_aluno], (erroTotal, totalResult) => {
-        if (erroTotal) {
-            return res.render('aluno-est', {
-                usuario: req.session.usuario,
-                totalTreinos: 0,
-                erro: 'Erro ao carregar total de treinos.'
+    const sqlTreinosSemana = `
+        SELECT 
+            DAYOFWEEK(data_treino) AS dia,
+            COUNT(*) AS total
+        FROM treino_realizado
+        WHERE id_aluno = ?
+          AND data_treino >= DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) - 1) DAY)
+          AND data_treino < DATE_ADD(
+                DATE_SUB(CURDATE(), INTERVAL (DAYOFWEEK(CURDATE()) - 1) DAY),
+                INTERVAL 7 DAY
+          )
+        GROUP BY dia;
+    `;
+
+    const sqlStreak = `
+        SELECT DISTINCT DATE(data_treino) AS dia
+        FROM treino_realizado
+        WHERE id_aluno = ?
+        ORDER BY dia DESC;
+    `;
+
+    db.query(sqlTotalTreinos, [id_aluno], (errTotal, totalRes) => {
+        if (errTotal) return res.sendStatus(500);
+
+        const totalTreinos = totalRes[0]?.total || 0;
+
+        db.query(sqlTreinosSemana, [id_aluno], (errSemana, semanaRes) => {
+            if (errSemana) return res.sendStatus(500);
+
+            // Array DOM → SAB
+            const graficoSemana = [0, 0, 0, 0, 0, 0, 0];
+            semanaRes.forEach(item => {
+                graficoSemana[item.dia - 1] = item.total;
             });
-        }
 
-        const totalTreinos = totalResult[0]?.total || 0;
+            db.query(sqlStreak, [id_aluno], (errStreak, streakRes) => {
+                if (errStreak) return res.sendStatus(500);
 
-        return res.render('aluno-est', {
-            usuario: req.session.usuario,
-            totalTreinos,
-            erro: null
+                let streak = 0;
+                let hoje = new Date();
+                hoje.setHours(0,0,0,0);
+
+                for (let i = 0; i < streakRes.length; i++) {
+                    const diaTreino = new Date(streakRes[i].dia);
+                    diaTreino.setHours(0,0,0,0);
+
+                    const diff = (hoje - diaTreino) / (1000 * 60 * 60 * 24);
+
+                    if (diff === i) {
+                        streak++;
+                    } else {
+                        break;
+                    }
+                }
+
+                res.render('aluno-est', {
+                    usuario: req.session.usuario,
+                    totalTreinos,
+                    graficoSemana,
+                    streak
+                });
+            });
         });
     });
 });
-
 
 router.get('/conta', alunoAuth, function (req, res) {
 
@@ -471,69 +536,93 @@ router.post('/opcoes/treino/personalizado', alunoAuth, function (req, res) {
     });
 });
 
+function treinoBloqueadoEstaSemana(ultimaExecucao) {
+    if (!ultimaExecucao) return false;
+
+    const hoje = new Date();
+    const inicioSemana = new Date(hoje);
+    inicioSemana.setDate(hoje.getDate() - hoje.getDay());
+    inicioSemana.setHours(0, 0, 0, 0);
+
+    return new Date(ultimaExecucao) >= inicioSemana;
+};
+
 router.get('/meus-treinos', alunoAuth, function (req, res) {
 
     const idAluno = req.session.usuario.id;
 
+    function marcarBloqueio(lista) {
+        return lista.map(treino => ({
+            ...treino,
+            bloqueado: treinoBloqueadoEstaSemana(treino.ultima_execucao)
+        }));
+    }
+
     const sqlPublicos = `
         SELECT 
-            t.*
+            t.*,
+            MAX(tr.data_treino) AS ultima_execucao
         FROM treino t
+        LEFT JOIN treino_realizado tr
+            ON tr.id_treino = t.id_treino
+            AND tr.id_aluno = ?
         WHERE t.criador_tipo = 1
           AND t.publico = 1
+        GROUP BY t.id_treino
     `;
 
     const sqlPrivadosAluno = `
         SELECT 
             t.*,
-            p.dia_semana
+            p.dia_semana,
+            MAX(tr.data_treino) AS ultima_execucao
         FROM treino t
         INNER JOIN treino_personalizado p
             ON p.id_treino = t.id_treino
+        LEFT JOIN treino_realizado tr
+            ON tr.id_treino = t.id_treino
+            AND tr.id_aluno = ?
         WHERE t.id_criador = ?
           AND t.criador_tipo = 1
           AND t.publico = 0
           AND p.id_aluno = ?
+        GROUP BY t.id_treino, p.dia_semana
     `;
 
     const sqlPrivadosInstrutor = `
         SELECT 
             t.*, 
             p.dia_semana,
-            p.observacoes
+            p.observacoes,
+            MAX(tr.data_treino) AS ultima_execucao
         FROM treino t
         INNER JOIN treino_personalizado p
             ON p.id_treino = t.id_treino
         INNER JOIN aluno a
             ON a.id_aluno = p.id_aluno
+        LEFT JOIN treino_realizado tr
+            ON tr.id_treino = t.id_treino
+            AND tr.id_aluno = ?
         WHERE t.criador_tipo = 2
           AND p.id_aluno = ?
           AND t.id_criador = a.id_instrutor
+        GROUP BY t.id_treino, p.dia_semana
         ORDER BY FIELD(p.dia_semana, 'SEGUNDA','TERCA','QUARTA','QUINTA','SEXTA','SABADO','DOMINGO');
     `;
 
-    db.query(sqlPublicos, function (err, treinosPublicos) {
-        if (err) {
-            console.error(err);
-            return res.status(500).send('Erro ao buscar treinos públicos');
-        }
+    db.query(sqlPublicos, [idAluno], function (err, treinosPublicos) {
+        if (err) return res.status(500).send('Erro treinos públicos');
 
-        db.query(sqlPrivadosAluno, [idAluno, idAluno], function (err, treinosAluno) {
-            if (err) {
-                console.error(err);
-                return res.status(500).send('Erro ao buscar treinos do aluno');
-            }
+        db.query(sqlPrivadosAluno, [idAluno, idAluno, idAluno], function (err, treinosAluno) {
+            if (err) return res.status(500).send('Erro treinos do aluno');
 
-            db.query(sqlPrivadosInstrutor, [idAluno], function (err, treinosInstrutor) {
-                if (err) {
-                    console.error(err);
-                    return res.status(500).send('Erro ao buscar treinos do instrutor');
-                }
+            db.query(sqlPrivadosInstrutor, [idAluno, idAluno], function (err, treinosInstrutor) {
+                if (err) return res.status(500).send('Erro treinos do instrutor');
 
                 res.render('aluno-treinos', {
-                    treinosPublicos,
-                    treinosAluno,
-                    treinosInstrutor
+                    treinosPublicos: marcarBloqueio(treinosPublicos),
+                    treinosAluno: marcarBloqueio(treinosAluno),
+                    treinosInstrutor: marcarBloqueio(treinosInstrutor)
                 });
             });
         });

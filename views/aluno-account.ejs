@@ -158,7 +158,10 @@
             <h5 class="card-title">Informações</h5>
 
             <p><strong>Total de treinos realizados: <%= totalTreinos %> </strong></p>
-            <p><strong>Último treino realizado: <%= new Date(ultimoTreino).toLocaleDateString('pt-BR') %>            </strong></p>
+            <p><strong>
+                Último treino realizado:
+                <%= ultimoTreino ? new Date(ultimoTreino).toLocaleDateString('pt-BR') : 'Não há treinos registrados' %>
+            </strong></p>            
         </div>
     </div>
 
